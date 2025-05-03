@@ -1,616 +1,578 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import CodeEditor from '@/components/editor/CodeEditor';
-import CodePreviewSandbox from '@/components/editor/CodePreviewSandbox';
-import QuizComponent from '@/components/lessons/QuizComponent';
-import ExerciseComponent from '@/components/lessons/ExerciseComponent';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import CodeEditor from "@/components/editor/CodeEditor";
+import ExerciseComponent from "@/components/lessons/ExerciseComponent";
+import QuizComponent from "@/components/lessons/QuizComponent";
+import CodePreviewSandbox from "@/components/editor/CodePreviewSandbox";
 
 export default function E2ETestingLesson() {
-  const [activeTab, setActiveTab] = useState('theory');
-  const [isCompleted, setIsCompleted] = useState(false);
+  const [activeSection, setActiveSection] = useState("theory");
+  const [progress, setProgress] = useState(0);
+  const [sectionCompleted, setSectionCompleted] = useState({
+    theory: false,
+    practice: false,
+    quiz: false
+  });
   
-  const installCypressCode = `# Installation via npm
-npm install cypress --save-dev
-
-# Ou via yarn
-yarn add cypress --dev
-
-# Ajout du script dans package.json
-"scripts": {
-  "cypress:open": "cypress open"
-}`;
-
-  const firstTestCode = `// cypress/e2e/login.cy.js
-describe('Login page', () => {
+  // Mettre à jour la progression
+  useEffect(() => {
+    const completedCount = Object.values(sectionCompleted).filter(Boolean).length;
+    setProgress(Math.round((completedCount / 3) * 100));
+  }, [sectionCompleted]);
+  
+  // Simuler la complétion d'une section
+  const completeSection = (section) => {
+    setSectionCompleted(prev => ({
+      ...prev,
+      [section]: true
+    }));
+  };
+  
+  // Animation variants
+  const contentVariants = {
+    hidden: { opacity: 0, x: 20 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, x: -20, transition: { duration: 0.2 } }
+  };
+  
+  const basicCypressTestExample = `
+// cypress/e2e/home.cy.js
+describe('Page d'accueil', () => {
   beforeEach(() => {
-    // Visiter la page de connexion avant chaque test
-    cy.visit('/login');
-  });
-  
-  it('should display login form', () => {
-    // Vérifier que le formulaire contient les éléments attendus
-    cy.get('form').should('exist');
-    cy.get('input[type="email"]').should('exist');
-    cy.get('input[type="password"]').should('exist');
-    cy.get('button[type="submit"]').should('exist');
-  });
-  
-  it('should show error with invalid credentials', () => {
-    // Remplir le formulaire avec des identifiants incorrects
-    cy.get('input[type="email"]').type('user@example.com');
-    cy.get('input[type="password"]').type('wrongpassword');
+    // Visiter la page d'accueil avant chaque test
+    cy.visit('http://localhost:3000')
+  })
+
+  it('Affiche le titre principal', () => {
+    // Vérifier que le titre principal existe et contient le texte attendu
+    cy.get('h1').should('contain', 'Apprenez Next.js')
+  })
+
+  it('Navigue vers la page des leçons', () => {
+    // Cliquer sur le lien de navigation et vérifier l'URL
+    cy.get('a[href="/lessons"]').click()
+    cy.url().should('include', '/lessons')
+    cy.get('h1').should('contain', 'Modules d'apprentissage')
+  })
+})`;
+
+  const testingFormExample = `
+// cypress/e2e/login.cy.js
+describe('Formulaire de connexion', () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:3000/login')
+  })
+
+  it('Affiche un message d\'erreur pour un email invalide', () => {
+    // Entrer un email invalide
+    cy.get('input[name="email"]').type('email_invalide')
+    cy.get('input[name="password"]').type('motdepasse123')
+    cy.get('form').submit()
     
-    // Soumettre le formulaire
-    cy.get('button[type="submit"]').click();
-    
-    // Vérifier que le message d'erreur s'affiche
+    // Vérifier que le message d'erreur apparaît
     cy.get('.error-message').should('be.visible')
-      .and('contain', 'Invalid email or password');
-  });
-  
-  it('should login with valid credentials and redirect to dashboard', () => {
-    // Remplir le formulaire avec des identifiants corrects
-    cy.get('input[type="email"]').type('test@example.com');
-    cy.get('input[type="password"]').type('password123');
-    
-    // Soumettre le formulaire
-    cy.get('button[type="submit"]').click();
-    
-    // Vérifier que l'utilisateur est redirigé vers le tableau de bord
-    cy.url().should('include', '/dashboard');
-    cy.get('h1').should('contain', 'Dashboard');
-  });
-});`;
+      .and('contain', 'Veuillez entrer un email valide')
+  })
 
-  const advancedCypressCode = `// cypress/e2e/todo-app.cy.js
-describe('Todo Application', () => {
-  beforeEach(() => {
-    // Réinitialiser la base de données avec une API personnalisée
-    cy.request('POST', '/api/reset-db');
+  it('Redirige vers le tableau de bord après une connexion réussie', () => {
+    // Simuler une connexion réussie
+    cy.get('input[name="email"]').type('utilisateur@example.com')
+    cy.get('input[name="password"]').type('motdepasse123')
+    cy.get('form').submit()
     
-    // Visiter l'application
-    cy.visit('/');
-    
-    // Se connecter (avec une commande personnalisée)
-    cy.login('user@example.com', 'password123');
-  });
-  
-  it('should add a new todo item', () => {
-    const newItem = 'Apprendre Cypress';
-    
-    // Compter les tâches existantes
-    cy.get('.todo-item').then($items => {
-      const initialCount = $items.length;
-      
-      // Ajouter une nouvelle tâche
-      cy.get('.new-todo-input').type(newItem);
-      cy.get('.add-todo-button').click();
-      
-      // Vérifier que la tâche a été ajoutée
-      cy.get('.todo-item').should('have.length', initialCount + 1);
-      cy.contains('.todo-item', newItem).should('exist');
-    });
-  });
-  
-  it('should mark a todo as completed', () => {
-    // Trouver la première tâche non complétée
-    cy.get('.todo-item:not(.completed)').first().as('todoItem');
-    
-    // Cliquer sur la case à cocher
-    cy.get('@todoItem').find('.todo-checkbox').click();
-    
-    // Vérifier que la tâche est marquée comme complétée
-    cy.get('@todoItem').should('have.class', 'completed');
-    
-    // Vérifier que l'état persiste après rechargement
-    cy.reload();
-    cy.contains('.todo-item.completed', 'Test Task').should('exist');
-  });
-  
-  it('should filter todos by status', () => {
-    // Ajouter quelques tâches pour le test
-    cy.addTodo('Tâche active 1');
-    cy.addTodo('Tâche active 2');
-    cy.addTodo('Tâche à compléter');
-    
-    // Marquer une tâche comme complétée
-    cy.contains('.todo-item', 'Tâche à compléter')
-      .find('.todo-checkbox').click();
-    
-    // Filtrer par tâches actives
-    cy.get('.filter-active').click();
-    cy.get('.todo-item').should('have.length', 2);
-    cy.contains('.todo-item', 'Tâche active 1').should('be.visible');
-    cy.contains('.todo-item', 'Tâche à compléter').should('not.exist');
-    
-    // Filtrer par tâches complétées
-    cy.get('.filter-completed').click();
-    cy.get('.todo-item').should('have.length', 1);
-    cy.contains('.todo-item', 'Tâche à compléter').should('be.visible');
-  });
-});
+    // Vérifier la redirection
+    cy.url().should('include', '/dashboard')
+    cy.get('h1').should('contain', 'Tableau de bord')
+  })
+})`;
 
-// Commandes personnalisées dans cypress/support/commands.js
+  const customCommandsExample = `
+// cypress/support/commands.js
 Cypress.Commands.add('login', (email, password) => {
-  cy.request({
-    method: 'POST',
-    url: '/api/login',
-    body: { email, password }
-  }).then((resp) => {
-    window.localStorage.setItem('token', resp.body.token);
-  });
-});
+  cy.visit('/login')
+  cy.get('input[name="email"]').type(email)
+  cy.get('input[name="password"]').type(password)
+  cy.get('form').submit()
+  // Attendre que la redirection se termine
+  cy.url().should('include', '/dashboard')
+})
 
-Cypress.Commands.add('addTodo', (text) => {
-  cy.get('.new-todo-input').type(text);
-  cy.get('.add-todo-button').click();
-});`;
+// Utilisation dans un test
+// cypress/e2e/protected-page.cy.js
+describe('Page protégée', () => {
+  beforeEach(() => {
+    // Utiliser la commande personnalisée pour se connecter
+    cy.login('utilisateur@example.com', 'motdepasse123')
+  })
+  
+  it('Accède à une page protégée', () => {
+    cy.visit('/profile')
+    cy.get('h1').should('contain', 'Profil Utilisateur')
+  })
+})`;
+
+  const fixturesExample = `
+// cypress/fixtures/user.json
+{
+  "email": "test@example.com",
+  "password": "testpassword",
+  "name": "Utilisateur Test"
+}
+
+// cypress/e2e/user-profile.cy.js
+describe('Profil utilisateur', () => {
+  beforeEach(() => {
+    // Charger les données de test depuis le fixture
+    cy.fixture('user').then((userData) => {
+      // Stocker les données dans une variable Cypress
+      cy.wrap(userData).as('user')
+    })
+    
+    // Se connecter avec les données du fixture
+    cy.get('@user').then((user) => {
+      cy.login(user.email, user.password)
+    })
+  })
+  
+  it('Affiche les informations du profil', () => {
+    cy.visit('/profile')
+    cy.get('@user').then((user) => {
+      cy.get('[data-testid="user-name"]').should('contain', user.name)
+      cy.get('[data-testid="user-email"]').should('contain', user.email)
+    })
+  })
+})`;
+
+  const interceptExample = `
+// Intercepter les requêtes API
+describe('Gestion de la liste des cours', () => {
+  beforeEach(() => {
+    // Intercepter la requête GET à l'API des cours
+    cy.intercept('GET', '/api/courses', { fixture: 'courses.json' }).as('getCourses')
+    cy.login('admin@example.com', 'admin123')
+    cy.visit('/admin/courses')
+    // Attendre que la requête interceptée soit résolue
+    cy.wait('@getCourses')
+  })
+  
+  it('Affiche la liste des cours mockée', () => {
+    // Vérifier que les données du fixture sont affichées
+    cy.get('.course-card').should('have.length', 3)
+    cy.get('.course-card').first().should('contain', 'Introduction à Next.js')
+  })
+  
+  it('Simule l\'ajout d\'un nouveau cours', () => {
+    // Intercepter la requête POST pour simuler l'ajout d'un cours
+    cy.intercept('POST', '/api/courses', {
+      statusCode: 201,
+      body: {
+        id: 4,
+        title: 'Nouveau Cours',
+        description: 'Description du nouveau cours'
+      }
+    }).as('addCourse')
+    
+    // Remplir le formulaire et soumettre
+    cy.get('[data-testid="add-course-btn"]').click()
+    cy.get('input[name="title"]').type('Nouveau Cours')
+    cy.get('textarea[name="description"]').type('Description du nouveau cours')
+    cy.get('form').submit()
+    
+    // Attendre que la requête interceptée soit résolue
+    cy.wait('@addCourse')
+    
+    // Vérifier que le nouveau cours est ajouté à l'interface
+    cy.get('.course-card').should('have.length', 4)
+    cy.get('.course-card').last().should('contain', 'Nouveau Cours')
+  })
+})`;
+
+  const exerciseInitialCode = `
+// cypress/e2e/dashboard.cy.js
+describe('Tests du tableau de bord', () => {
+  beforeEach(() => {
+    // Visitez la page du tableau de bord
+    cy.visit('http://localhost:3000/dashboard')
+  })
+
+  // Écrivez un test qui vérifie que le titre "Tableau de bord" est présent
+  it('Affiche le titre du tableau de bord', () => {
+    // Votre code ici
+  })
+
+  // Écrivez un test qui vérifie que les statistiques des cours sont affichées
+  it('Affiche les statistiques des cours', () => {
+    // Votre code ici
+  })
+
+  // Écrivez un test qui vérifie la navigation vers une leçon
+  it('Permet de naviguer vers une leçon', () => {
+    // Votre code ici
+  })
+})`;
+
+  const exerciseSolution = `
+// cypress/e2e/dashboard.cy.js
+describe('Tests du tableau de bord', () => {
+  beforeEach(() => {
+    // Visitez la page du tableau de bord
+    cy.visit('http://localhost:3000/dashboard')
+  })
+
+  // Test pour vérifier que le titre "Tableau de bord" est présent
+  it('Affiche le titre du tableau de bord', () => {
+    cy.get('h1').should('contain', 'Tableau de bord')
+  })
+
+  // Test pour vérifier que les statistiques des cours sont affichées
+  it('Affiche les statistiques des cours', () => {
+    cy.get('[data-testid="course-stats"]').should('exist')
+    cy.get('[data-testid="total-courses"]').should('be.visible')
+    cy.get('[data-testid="completed-courses"]').should('be.visible')
+  })
+
+  // Test pour vérifier la navigation vers une leçon
+  it('Permet de naviguer vers une leçon', () => {
+    // Trouver et cliquer sur le premier cours disponible
+    cy.get('[data-testid="course-item"]').first().click()
+    
+    // Vérifier que l'URL a changé et contient 'lessons'
+    cy.url().should('include', '/lessons/module/')
+    
+    // Vérifier qu'on est bien sur une page de leçon
+    cy.get('h1').should('exist')
+    cy.get('[data-testid="lesson-content"]').should('exist')
+  })
+})`;
 
   const quizQuestions = [
     {
-      question: "Qu'est-ce que les tests end-to-end (E2E) en développement web?",
+      id: 1,
+      question: "Qu'est-ce que Cypress?",
       options: [
-        "Des tests qui vérifient uniquement le fonctionnement du backend",
-        "Des tests qui simulent le comportement d'un utilisateur réel du début à la fin",
-        "Des tests qui vérifient uniquement l'interface utilisateur",
-        "Des tests qui vérifient uniquement les points d'entrée de l'API"
+        "Un framework de tests unitaires pour React",
+        "Un outil de tests d'intégration pour Node.js",
+        "Un framework de tests end-to-end pour les applications web",
+        "Un système d'automatisation de déploiement"
       ],
-      correctAnswer: 1
+      correctAnswer: 2,
+      explanation: "Cypress est un framework de tests end-to-end qui permet de tester des applications web comme le ferait un utilisateur réel, en interagissant avec l'interface utilisateur dans un navigateur."
     },
     {
-      question: "Quel est l'avantage principal de Cypress par rapport aux autres outils de tests E2E?",
+      id: 2,
+      question: "Quelle est la différence principale entre les tests E2E et les tests unitaires?",
       options: [
-        "Il est gratuit alors que tous les autres sont payants",
-        "Il fonctionne avec tous les frameworks front-end",
-        "Il s'exécute dans le même processus que l'application, offrant un contrôle direct",
-        "Il est le seul à pouvoir tester les applications React"
+        "Les tests E2E sont plus rapides à exécuter",
+        "Les tests E2E testent l'application dans son ensemble, comme un utilisateur réel",
+        "Les tests E2E ne nécessitent pas de navigateur",
+        "Les tests E2E sont plus simples à écrire"
       ],
-      correctAnswer: 2
+      correctAnswer: 1,
+      explanation: "Contrairement aux tests unitaires qui testent des fonctions ou composants isolés, les tests E2E testent l'application complète, en simulant les interactions d'un utilisateur réel à travers l'interface utilisateur."
     },
     {
-      question: "Qu'est-ce que cy.intercept() fait dans Cypress?",
+      id: 3,
+      question: "Comment Cypress permet-il d'interagir avec le DOM?",
       options: [
-        "Teste les performances des requêtes réseau",
-        "Permet d'espionner, de stubber ou de modifier les requêtes réseau",
-        "Intercepte les erreurs JavaScript de l'application",
-        "Simule des connexions réseau lentes"
+        "En utilisant des sélecteurs jQuery",
+        "En manipulant directement le Virtual DOM de React",
+        "En injectant du JavaScript dans la page",
+        "En utilisant des outils d'accessibilité"
       ],
-      correctAnswer: 1
+      correctAnswer: 0,
+      explanation: "Cypress utilise des sélecteurs similaires à jQuery pour trouver et interagir avec les éléments du DOM. Par exemple, cy.get('button').click() utilise un sélecteur CSS pour trouver un bouton et simuler un clic dessus."
+    },
+    {
+      id: 4,
+      question: "À quoi servent les fixtures dans Cypress?",
+      options: [
+        "À définir des composants réutilisables pour les tests",
+        "À stocker des données statiques pour les tests",
+        "À configurer l'environnement de test",
+        "À définir des hooks avant et après les tests"
+      ],
+      correctAnswer: 1,
+      explanation: "Les fixtures dans Cypress servent à stocker des données de test statiques (comme des JSON) qui peuvent être chargées et utilisées dans les tests, ce qui permet de simuler des données sans avoir à les définir dans chaque test."
+    },
+    {
+      id: 5,
+      question: "Comment peut-on mocker une requête API dans Cypress?",
+      options: [
+        "En utilisant cy.mock()",
+        "En créant un service mock avec un framework comme MSW",
+        "En utilisant cy.intercept() pour intercepter et simuler les réponses",
+        "En modifiant le code source pour contourner les appels API"
+      ],
+      correctAnswer: 2,
+      explanation: "Cypress permet de mocker les requêtes API en utilisant cy.intercept() pour intercepter les requêtes HTTP et définir des réponses personnalisées, sans avoir à modifier le code source de l'application."
     }
   ];
 
-  const exerciseInstructions = `
-  Créez un test E2E Cypress pour un formulaire de contact qui:
-  1. Visite la page du formulaire de contact
-  2. Remplit tous les champs (nom, email, message)
-  3. Soumet le formulaire
-  4. Vérifie qu'un message de succès s'affiche
-  5. Bonus: intercepte la requête réseau et simule une réponse réussie
-  `;
-
-  const exerciseTemplate = `// Créez le test Cypress pour un formulaire de contact
-describe('Contact Form', () => {
-  beforeEach(() => {
-    // Visitez la page de contact
-    cy.visit('/contact');
-    
-    // Bonus: Intercepter la soumission du formulaire
-    // cy.intercept('POST', '/api/contact', { /* votre réponse simulée */ });
-  });
-  
-  it('should submit the contact form successfully', () => {
-    // Implémentez le test ici
-    // 1. Remplir les champs du formulaire
-    
-    // 2. Soumettre le formulaire
-    
-    // 3. Vérifier le message de succès
-  });
-  
-  // Facultatif: testez également le cas d'erreur
-  it('should show an error message when form submission fails', () => {
-    // Implémentez ce test pour vérifier la gestion des erreurs
-  });
-});`;
-
-  const exerciseValidation = (code) => {
-    // Vérifications basiques du code soumis
-    const hasVisit = code.includes('cy.visit');
-    const hasFormFilling = code.includes('cy.get') && code.includes('.type(');
-    const hasSubmission = code.includes('click') || code.includes('submit');
-    const hasAssertion = code.includes('should(') && 
-      (code.includes('success') || code.includes('thank'));
-    
-    return hasVisit && hasFormFilling && hasSubmission && hasAssertion;
-  };
-
-  const handleComplete = () => {
-    setIsCompleted(true);
-    // Mettre à jour la progression
-  };
-
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-3xl font-bold mb-2">Tests End-to-End avec Cypress</h1>
-        <p className="text-gray-600 mb-6">Apprenez à automatiser le test de votre application web comme un utilisateur réel le ferait.</p>
-        
-        <div className="mb-6">
-          <div className="flex border-b">
-            <button 
-              className={`py-2 px-4 font-medium ${activeTab === 'theory' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('theory')}
-            >
-              Théorie
-            </button>
-            <button 
-              className={`py-2 px-4 font-medium ${activeTab === 'example' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('example')}
-            >
-              Exemple
-            </button>
-            <button 
-              className={`py-2 px-4 font-medium ${activeTab === 'exercise' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('exercise')}
-            >
-              Exercice
-            </button>
-            <button 
-              className={`py-2 px-4 font-medium ${activeTab === 'quiz' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('quiz')}
-            >
-              Quiz
-            </button>
+    <div className="container mx-auto px-4 py-8">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Tests End-to-End avec Cypress</h1>
+            <p className="text-gray-600 mt-2">Apprenez à mettre en place des tests end-to-end pour vos applications Next.js</p>
           </div>
           
-          <div className="py-4">
-            {activeTab === 'theory' && (
-              <div className="space-y-4">
-                <section>
-                  <h2 className="text-2xl font-semibold mb-3">Qu'est-ce que les tests End-to-End?</h2>
-                  <p className="mb-3">
-                    Les tests End-to-End (E2E) sont une méthodologie de test qui vérifie si le flux d'une application 
-                    fonctionne comme prévu du début à la fin. L'objectif est de simuler des scénarios d'utilisation réels 
-                    en testant tout le système dans son ensemble.
-                  </p>
-                  <p className="mb-3">
-                    Contrairement aux tests unitaires qui testent des fonctions isolées ou aux tests d'intégration qui 
-                    testent l'interaction entre composants, les tests E2E testent l'application complète telle qu'un 
-                    utilisateur l'expérimentera.
-                  </p>
-                </section>
-                
-                <section>
-                  <h2 className="text-2xl font-semibold mb-3">Cypress: un outil moderne pour les tests E2E</h2>
-                  <p className="mb-3">
-                    Cypress est un framework de test E2E JavaScript qui:
-                  </p>
-                  <ul className="list-disc ml-6 mb-4 space-y-2">
-                    <li>
-                      <strong>S'exécute dans le navigateur:</strong> Contrairement à Selenium, Cypress fonctionne dans le 
-                      même cycle d'exécution que votre application, ce qui lui donne un contrôle complet sur son 
-                      comportement.
-                    </li>
-                    <li>
-                      <strong>Attentes automatiques:</strong> Cypress attend automatiquement que les éléments soient 
-                      disponibles avant d'interagir avec eux, réduisant le besoin d'attentes explicites.
-                    </li>
-                    <li>
-                      <strong>Rechargement en temps réel:</strong> Cypress recharge automatiquement les tests lors de 
-                      modifications de fichiers.
-                    </li>
-                    <li>
-                      <strong>Débogage facile:</strong> Cypress prend des instantanés à chaque étape du test, permettant 
-                      de voir exactement ce qui s'est passé à chaque moment.
-                    </li>
-                    <li>
-                      <strong>Interception réseau:</strong> Il permet de stubber, espionner et modifier les requêtes réseau.
-                    </li>
-                  </ul>
-                </section>
-                
-                <section>
-                  <h2 className="text-2xl font-semibold mb-3">Architecture de Cypress</h2>
-                  <p className="mb-3">
-                    Cypress utilise une architecture unique qui lui confère plusieurs avantages:
-                  </p>
-                  <ul className="list-disc ml-6 mb-4 space-y-2">
-                    <li>
-                      <strong>Pas de pilotes Selenium:</strong> Cypress ne dépend pas des pilotes WebDriver comme Selenium.
-                    </li>
-                    <li>
-                      <strong>Exécution dans le navigateur:</strong> Les tests s'exécutent directement dans le navigateur, 
-                      ce qui permet un accès direct au DOM, aux événements, etc.
-                    </li>
-                    <li>
-                      <strong>Architecture Node.js:</strong> Le serveur Cypress s'exécute dans Node.js, permettant l'accès 
-                      au système de fichiers et au réseau.
-                    </li>
-                    <li>
-                      <strong>Communication bidirectionnelle:</strong> Le navigateur et Node.js communiquent continuellement, 
-                      permettant à Cypress d'espionner et de contrôler l'application.
-                    </li>
-                  </ul>
-                  <div className="my-4 flex justify-center">
-                    <div className="w-3/4 bg-gray-50 rounded-lg p-4">
-                      <div className="flex flex-col items-center space-y-4">
-                        <div className="w-full p-3 bg-blue-100 rounded-lg text-center">
-                          <span className="font-medium">Navigateur</span>
-                          <div className="mt-2 flex justify-around">
-                            <div className="px-3 py-1 bg-white rounded">Application</div>
-                            <div className="px-3 py-1 bg-green-100 rounded">Tests Cypress</div>
-                          </div>
-                        </div>
-                        <div className="h-6 w-px bg-gray-400 relative">
-                          <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-90">↑↓</div>
-                        </div>
-                        <div className="w-full p-3 bg-gray-200 rounded-lg text-center">
-                          <span className="font-medium">Node.js</span>
-                          <div className="mt-2 flex justify-around">
-                            <div className="px-3 py-1 bg-white rounded">Serveur Cypress</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-                
-                <section>
-                  <h2 className="text-2xl font-semibold mb-3">Types de tests avec Cypress</h2>
-                  <p className="mb-3">
-                    Bien que Cypress soit connu pour les tests E2E, il peut également être utilisé pour:
-                  </p>
-                  <ul className="list-disc ml-6 mb-4 space-y-2">
-                    <li>
-                      <strong>Tests d'intégration:</strong> Tester des composants individuels ou des groupes de composants.
-                    </li>
-                    <li>
-                      <strong>Tests d'API:</strong> Vérifier les réponses API directement avec cy.request().
-                    </li>
-                    <li>
-                      <strong>Tests de composants:</strong> Avec Cypress Component Testing, vous pouvez tester des 
-                      composants React, Vue ou Angular de manière isolée.
-                    </li>
-                    <li>
-                      <strong>Tests visuels:</strong> En intégrant des outils comme Percy, vous pouvez détecter les 
-                      changements visuels.
-                    </li>
-                  </ul>
-                </section>
-                
-                <section>
-                  <h2 className="text-2xl font-semibold mb-3">Bonnes pratiques avec Cypress</h2>
-                  <ul className="list-disc ml-6 mb-4 space-y-2">
-                    <li>
-                      <strong>Ne pas tester chaque chemin:</strong> Concentrez-vous sur les flux utilisateur critiques plutôt 
-                      que de tester chaque fonctionnalité.
-                    </li>
-                    <li>
-                      <strong>Préparer les données de test:</strong> Utilisez des API ou des commandes personnalisées pour 
-                      configurer l'état initial plutôt que l'interface utilisateur.
-                    </li>
-                    <li>
-                      <strong>Minimiser les assertions:</strong> Gardez les tests axés sur un objectif spécifique.
-                    </li>
-                    <li>
-                      <strong>Éviter les dépendances entre tests:</strong> Chaque test doit être indépendant et pouvoir 
-                      s'exécuter seul.
-                    </li>
-                    <li>
-                      <strong>Utiliser des sélecteurs stables:</strong> Préférez les attributs data-* dédiés aux tests plutôt 
-                      que des classes CSS qui peuvent changer.
-                    </li>
-                  </ul>
-                </section>
-              </div>
-            )}
-            
-            {activeTab === 'example' && (
-              <div className="space-y-6">
-                <section>
-                  <h2 className="text-xl font-semibold mb-3">Installation et configuration</h2>
-                  <p className="mb-3">Voici comment ajouter Cypress à votre projet:</p>
-                  <div className="mb-2">
-                    <CodeEditor 
-                      code={installCypressCode} 
-                      language="bash"
-                      readOnly={true}
-                    />
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Après l'installation, lancez Cypress avec <code>npm run cypress:open</code>. Lors de la première 
-                    exécution, Cypress créera une structure de dossiers et des exemples de tests.
-                  </p>
-                  
-                  <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                    <h3 className="font-medium text-amber-800 mb-2">Structure de fichiers Cypress</h3>
-                    <div className="text-sm font-mono text-amber-700">
-                      <pre>
-{`cypress/
-  ├── e2e/               # Tests end-to-end
-  ├── fixtures/          # Données de test
-  ├── support/           # Commandes personnalisées
-  │   ├── commands.js    # Définir des commandes réutilisables
-  │   └── e2e.js         # Configuration globale
-  └── screenshots/       # Captures d'écran des échecs de test
-cypress.config.js        # Configuration de Cypress`}
-                      </pre>
-                    </div>
-                  </div>
-                </section>
-                
-                <section>
-                  <h2 className="text-xl font-semibold mb-3">Votre premier test Cypress</h2>
-                  <p className="mb-3">Voici un exemple de test pour une page de connexion:</p>
-                  <div className="mb-2">
-                    <CodeEditor 
-                      code={firstTestCode} 
-                      language="javascript"
-                      readOnly={true}
-                    />
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Ce test vérifie trois scénarios sur une page de connexion: l'affichage correct du formulaire, 
-                    la gestion des identifiants incorrects, et la connexion réussie.
-                  </p>
-                  
-                  <div className="mb-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
-                    <h3 className="font-medium text-indigo-800 mb-2">Concepts clés</h3>
-                    <ul className="list-disc ml-6 space-y-1 text-sm">
-                      <li><strong>describe</strong>: Regroupe les tests liés</li>
-                      <li><strong>it</strong>: Définit un test spécifique</li>
-                      <li><strong>cy.visit()</strong>: Navigue vers une URL</li>
-                      <li><strong>cy.get()</strong>: Sélectionne un élément du DOM</li>
-                      <li><strong>cy.type()</strong>: Simule la saisie de texte</li>
-                      <li><strong>cy.click()</strong>: Simule un clic</li>
-                      <li><strong>should()</strong>: Crée une assertion sur un élément</li>
-                    </ul>
-                  </div>
-                </section>
-                
-                <section>
-                  <h2 className="text-xl font-semibold mb-3">Fonctionnalités avancées</h2>
-                  <p className="mb-3">Voici un exemple plus avancé testant une application Todo:</p>
-                  <div className="mb-2">
-                    <CodeEditor 
-                      code={advancedCypressCode} 
-                      language="javascript"
-                      readOnly={true}
-                    />
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Cet exemple montre des techniques plus avancées comme:
-                  </p>
-                  <ul className="list-disc ml-6 mb-4 space-y-1 text-sm">
-                    <li>Réinitialisation de la base de données via une API</li>
-                    <li>Commandes personnalisées pour des actions répétitives</li>
-                    <li>Alias avec cy.as() pour référencer des éléments</li>
-                    <li>Tests complexes impliquant plusieurs interactions</li>
-                    <li>Vérification de l'état après rechargement de la page</li>
-                  </ul>
-                </section>
-                
-                <section>
-                  <h2 className="text-xl font-semibold mb-3">Démonstration visuelle de Cypress</h2>
-                  <div className="border rounded-lg overflow-hidden">
-                    <div className="bg-gray-100 p-3 border-b flex justify-between items-center">
-                      <span className="font-medium">Interface de Cypress</span>
-                      <div className="flex space-x-2">
-                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2">
-                      <div className="border-r">
-                        <div className="p-3 bg-white">
-                          <div className="font-mono text-sm text-gray-800">
-                            <div className="text-green-600">✓ should display login form</div>
-                            <div className="text-green-600">✓ should show error with invalid credentials</div>
-                            <div className="text-blue-600 font-bold">► should login with valid credentials</div>
-                          </div>
-                        </div>
-                        <div className="bg-gray-50 p-3 border-t">
-                          <div className="font-mono text-xs">
-                            <div>1. Visiting: /login</div>
-                            <div>2. Get: input[type="email"]</div>
-                            <div>3. Type: test@example.com</div>
-                            <div>4. Get: input[type="password"]</div>
-                            <div>5. Type: password123</div>
-                            <div>6. Get: button[type="submit"]</div>
-                            <div>7. Click</div>
-                            <div className="text-blue-600">8. Assert: url includes /dashboard</div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-white">
-                        <div className="p-4">
-                          <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-                          <div className="p-3 bg-green-100 text-green-800 rounded mb-4">
-                            Connexion réussie ! Bienvenue, Test User.
-                          </div>
-                          <div className="border rounded-lg p-3">
-                            <h2 className="font-medium mb-2">Résumé</h2>
-                            <div className="space-y-1 text-sm">
-                              <div className="flex justify-between">
-                                <span>Projets actifs:</span>
-                                <span>3</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Tâches en attente:</span>
-                                <span>7</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Messages non lus:</span>
-                                <span>2</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2 text-center">
-                    L'interface de Cypress montre les tests en cours d'exécution à gauche et votre application à droite.
-                  </p>
-                </section>
-              </div>
-            )}
-            
-            {activeTab === 'exercise' && (
-              <div>
-                <ExerciseComponent
-                  instructions={exerciseInstructions}
-                  codeTemplate={exerciseTemplate}
-                  validateFn={exerciseValidation}
-                  onComplete={() => setActiveTab('quiz')}
-                />
-              </div>
-            )}
-            
-            {activeTab === 'quiz' && (
-              <div>
-                <QuizComponent 
-                  questions={quizQuestions}
-                  onComplete={handleComplete}
-                />
-              </div>
+          <div className="flex space-x-2">
+            <Link href="/lessons/module/testing" className="btn-secondary">
+              Retour au module
+            </Link>
+          </div>
+        </div>
+        
+        <div className="mb-8">
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="bg-indigo-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
+          </div>
+          <div className="flex justify-between mt-2">
+            <span className="text-sm text-gray-600">Progression: {progress}%</span>
+            {progress === 100 && (
+              <span className="text-sm text-green-600 font-medium">Module complété! 🎉</span>
             )}
           </div>
         </div>
         
-        {isCompleted && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center text-green-800 mb-6"
+        <div className="flex space-x-4 mb-8">
+          <button
+            onClick={() => setActiveSection("theory")}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              activeSection === "theory" 
+                ? "bg-indigo-600 text-white" 
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <p className="font-medium">Leçon terminée !</p>
-              <p className="text-sm">Vous avez maîtrisé les tests End-to-End avec Cypress.</p>
+            Théorie
+          </button>
+          <button
+            onClick={() => setActiveSection("practice")}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              activeSection === "practice" 
+                ? "bg-indigo-600 text-white" 
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+          >
+            Pratique
+          </button>
+          <button
+            onClick={() => setActiveSection("quiz")}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              activeSection === "quiz" 
+                ? "bg-indigo-600 text-white" 
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+          >
+            Quiz
+          </button>
+        </div>
+        
+        {activeSection === "theory" && (
+          <motion.div
+            key="theory"
+            variants={contentVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="space-y-6"
+          >
+            <div className="prose max-w-none">
+              <h2>Introduction aux tests End-to-End (E2E)</h2>
+              <p>
+                Les tests End-to-End (E2E) simulent les interactions d'un utilisateur réel avec votre application. 
+                Contrairement aux tests unitaires qui testent des fonctions isolées, les tests E2E vérifient que tous 
+                les composants de votre application fonctionnent ensemble correctement.
+              </p>
+              <p>
+                <strong>Cypress</strong> est l'un des frameworks les plus populaires pour les tests E2E. Il offre:
+              </p>
+              <ul>
+                <li>Une exécution dans un vrai navigateur</li>
+                <li>Des attentes automatiques (pas besoin de sleep/wait arbitraires)</li>
+                <li>Un retour visuel en temps réel</li>
+                <li>La possibilité de déboguer facilement</li>
+                <li>Des outils pour mocker des APIs</li>
+              </ul>
+              
+              <h3>Configuration de Cypress avec Next.js</h3>
+              <p>
+                Pour installer Cypress dans un projet Next.js:
+              </p>
+              <pre><code>npm install cypress --save-dev</code></pre>
+              <p>
+                Ajoutez un script dans votre package.json:
+              </p>
+              <pre><code>"cypress": "cypress open"</code></pre>
+              <p>
+                Lancez Cypress pour la première fois:
+              </p>
+              <pre><code>npm run cypress</code></pre>
+              <p>
+                Cypress créera automatiquement un répertoire cypress/ avec des exemples de tests.
+              </p>
+              
+              <h3>Structure d'un test Cypress</h3>
+              <p>
+                Un test Cypress de base ressemble à ceci:
+              </p>
+              
+              <div className="bg-gray-100 p-4 rounded-md">
+                <CodePreviewSandbox code={basicCypressTestExample} language="javascript" />
+              </div>
+              
+              <p>
+                Les tests Cypress utilisent des fonctions comme <code>describe</code>, <code>it</code>, <code>beforeEach</code> 
+                similaires à Mocha. L'objet global <code>cy</code> fournit des méthodes pour interagir avec la page.
+              </p>
+              
+              <h3>Tester les formulaires</h3>
+              <p>
+                Cypress permet de tester facilement les interactions avec les formulaires:
+              </p>
+              
+              <div className="bg-gray-100 p-4 rounded-md">
+                <CodePreviewSandbox code={testingFormExample} language="javascript" />
+              </div>
+              
+              <h3>Commandes personnalisées</h3>
+              <p>
+                Vous pouvez créer des commandes personnalisées pour réutiliser des séquences d'actions communes:
+              </p>
+              
+              <div className="bg-gray-100 p-4 rounded-md">
+                <CodePreviewSandbox code={customCommandsExample} language="javascript" />
+              </div>
+              
+              <h3>Fixtures et données de test</h3>
+              <p>
+                Les fixtures permettent de stocker des données de test statiques:
+              </p>
+              
+              <div className="bg-gray-100 p-4 rounded-md">
+                <CodePreviewSandbox code={fixturesExample} language="javascript" />
+              </div>
+              
+              <h3>Intercepter les requêtes réseau</h3>
+              <p>
+                Cypress permet d'intercepter et de mocker les requêtes réseau:
+              </p>
+              
+              <div className="bg-gray-100 p-4 rounded-md">
+                <CodePreviewSandbox code={interceptExample} language="javascript" />
+              </div>
+              
+              <h3>Bonnes pratiques pour les tests E2E</h3>
+              <ul>
+                <li><strong>Sélecteurs stables</strong>: Utilisez des attributs data-* (comme data-testid) pour sélectionner des éléments</li>
+                <li><strong>Tests isolés</strong>: Chaque test doit être indépendant et pouvoir s'exécuter seul</li>
+                <li><strong>État initial contrôlé</strong>: Utilisez beforeEach pour remettre l'application dans un état connu</li>
+                <li><strong>Assertions claires</strong>: Vérifiez des comportements spécifiques, pas juste la présence d'éléments</li>
+                <li><strong>Tests réalistes</strong>: Testez des parcours utilisateur complets</li>
+              </ul>
+            </div>
+            
+            <div className="flex justify-between mt-8">
+              <button 
+                className="btn-secondary"
+                onClick={() => setActiveSection("practice")}
+              >
+                Passer à la pratique
+              </button>
+              <button
+                className="btn-primary"
+                onClick={() => completeSection("theory")}
+              >
+                Marquer comme terminé
+              </button>
             </div>
           </motion.div>
         )}
         
-        <div className="flex justify-between">
-          <button className="btn-secondary">
-            Leçon précédente
-          </button>
-          <button className="btn-primary">
-            Leçon suivante: Tests d'intégration
-          </button>
-        </div>
-      </motion.div>
+        {activeSection === "practice" && (
+          <motion.div
+            key="practice"
+            variants={contentVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="space-y-6"
+          >
+            <div className="prose max-w-none mb-6">
+              <h2>Exercice: Tests du tableau de bord</h2>
+              <p>
+                Dans cet exercice, vous allez écrire des tests E2E pour le tableau de bord de notre application.
+                Vous allez vérifier que:
+              </p>
+              <ul>
+                <li>Le titre du tableau de bord s'affiche correctement</li>
+                <li>Les statistiques des cours sont visibles</li>
+                <li>La navigation vers une leçon fonctionne</li>
+              </ul>
+              <p>
+                Complétez les tests dans le fichier <code>dashboard.cy.js</code> ci-dessous:
+              </p>
+            </div>
+            
+            <ExerciseComponent
+              initialCode={exerciseInitialCode}
+              solutionCode={exerciseSolution}
+              language="javascript"
+              onComplete={() => completeSection("practice")}
+            />
+            
+            <div className="flex justify-between mt-8">
+              <button 
+                className="btn-secondary"
+                onClick={() => setActiveSection("theory")}
+              >
+                Revenir à la théorie
+              </button>
+              <button 
+                className="btn-secondary"
+                onClick={() => setActiveSection("quiz")}
+              >
+                Passer au quiz
+              </button>
+            </div>
+          </motion.div>
+        )}
+        
+        {activeSection === "quiz" && (
+          <motion.div
+            key="quiz"
+            variants={contentVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <QuizComponent
+              questions={quizQuestions}
+              onComplete={() => completeSection("quiz")}
+            />
+            
+            <div className="flex justify-between mt-8">
+              <button 
+                className="btn-secondary"
+                onClick={() => setActiveSection("practice")}
+              >
+                Revenir à la pratique
+              </button>
+              <Link
+                href="/lessons/module/testing"
+                className="btn-primary"
+              >
+                Terminer la leçon
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
