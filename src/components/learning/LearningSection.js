@@ -175,7 +175,7 @@ export default function LearningSection({
             Points clés à retenir
           </h3>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
-            {keyPoints.map((point, index) => (
+            {keyPoints && keyPoints.map((point, index) => (
               <li key={index}>{point}</li>
             ))}
           </ul>
