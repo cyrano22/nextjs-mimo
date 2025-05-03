@@ -7,10 +7,8 @@ const nextConfig = {
   images: {
     domains: [],
   },
-  // Augmenter la limite de temps pour le chargement des chunks
   experimental: {
     serverComponentsExternalPackages: [],
-    timeoutChunkLoading: 60000, // 60 secondes au lieu de la valeur par défaut
   },
 }
 
