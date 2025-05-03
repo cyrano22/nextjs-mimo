@@ -1,10 +1,12 @@
+"use client";
 
+import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  
+
   return (
     <footer className="bg-gray-800 text-white py-10 mt-auto">
       <div className="container mx-auto px-4">
@@ -27,73 +29,40 @@ export default function Footer() {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Liens rapides</h3>
             <ul className="space-y-2">
-              <li><a href="/dashboard" className="text-gray-300 hover:text-white transition-colors">Tableau de bord</a></li>
-              <li><a href="/learning-path" className="text-gray-300 hover:text-white transition-colors">Parcours d'apprentissage</a></li>
-              <li><a href="/portfolio" className="text-gray-300 hover:text-white transition-colors">Portfolio</a></li>
-              <li><a href="/lessons" className="text-gray-300 hover:text-white transition-colors">Leçons</a></li>
+              <li><Link href="/dashboard" className="text-gray-300 hover:text-white transition-colors">Tableau de bord</Link></li>
+              <li><Link href="/learning-path" className="text-gray-300 hover:text-white transition-colors">Parcours d'apprentissage</Link></li>
+              <li><Link href="/portfolio" className="text-gray-300 hover:text-white transition-colors">Portfolio</Link></li>
+              <li><Link href="/lessons" className="text-gray-300 hover:text-white transition-colors">Leçons</Link></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Ressources</h3>
             <ul className="space-y-2">
-              <li><a href="/javascript-fundamentals" className="text-gray-300 hover:text-white transition-colors">JavaScript fondamentaux</a></li>
+              <li><Link href="/javascript-fundamentals" className="text-gray-300 hover:text-white transition-colors">JavaScript fondamentaux</Link></li>
               <li><a href="https://nextjs.org/docs" className="text-gray-300 hover:text-white transition-colors">Documentation Next.js</a></li>
               <li><a href="https://tailwindcss.com/docs" className="text-gray-300 hover:text-white transition-colors">Documentation Tailwind CSS</a></li>
               <li><a href="https://reactjs.org/docs" className="text-gray-300 hover:text-white transition-colors">Documentation React</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Légal</h3>
             <ul className="space-y-2">
-              <li><a href="/about" className="text-gray-300 hover:text-white transition-colors">À propos</a></li>
-              <li><a href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</a></li>
-              <li><a href="/privacy" className="text-gray-300 hover:text-white transition-colors">Confidentialité</a></li>
-              <li><a href="/terms" className="text-gray-300 hover:text-white transition-colors">Conditions d'utilisation</a></li>
+              <li><Link href="/about" className="text-gray-300 hover:text-white transition-colors">À propos</Link></li>
+              <li><Link href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
+              <li><Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">Confidentialité</Link></li>
+              <li><Link href="/terms" className="text-gray-300 hover:text-white transition-colors">Conditions d'utilisation</Link></li>
             </ul>
           </div>
         </div>
-        
+
         <div className="mt-10 pt-6 border-t border-gray-700 text-center text-gray-400">
           <p>© {currentYear} NextJS Mimo Clone. Tous droits réservés.</p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-"use client";
-
-import React from 'react';
-import Link from 'next/link';
-
-export default function Footer() {
-  return (
-    <footer className="bg-gray-800 text-white py-6">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <p className="text-lg font-semibold">NextJS Mimo Clone</p>
-            <p className="text-gray-400">Apprenez Next.js de manière interactive</p>
-          </div>
-          <div className="flex space-x-4">
-            <Link href="/about" className="text-gray-300 hover:text-white">
-              À propos
-            </Link>
-            <Link href="/contact" className="text-gray-300 hover:text-white">
-              Contact
-            </Link>
-            <Link href="/privacy" className="text-gray-300 hover:text-white">
-              Confidentialité
-            </Link>
-          </div>
-        </div>
-        <div className="mt-4 text-center text-gray-400">
-          <p>© {new Date().getFullYear()} NextJS Mimo Clone. Tous droits réservés.</p>
         </div>
       </div>
     </footer>
