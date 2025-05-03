@@ -27,9 +27,7 @@ export default function LessonsPage() {
             level: "Débutant",
             image: "/images/modules/nextjs-intro.jpg",
             progressPercent: 0,
-            lessons: 3,
-            duration: "2 heures",
-            content: [
+            lessons: [
               { id: "1-1", title: "Qu'est-ce que Next.js", type: "theory", duration: "15 min" },
               { id: "1-2", title: "Avantages de Next.js", type: "theory", duration: "10 min" },
               { id: "1-3", title: "Installation et Configuration", type: "exercise", duration: "20 min" }
@@ -42,13 +40,39 @@ export default function LessonsPage() {
             level: "Intermédiaire",
             image: "/images/modules/nextjs-fundamentals.jpg",
             progressPercent: 0,
-            lessons: 4,
-            duration: "3 heures",
-            content: [
+            lessons: [
               { id: "2-1", title: "Structure des Fichiers", type: "theory", duration: "15 min" },
               { id: "2-2", title: "Système de Routage", type: "theory", duration: "20 min" },
               { id: "2-3", title: "Pages et Composants", type: "exercise", duration: "25 min" },
               { id: "2-4", title: "Data Fetching", type: "project", duration: "30 min" }
+            ]
+          },
+          {
+            id: "3",
+            title: "JavaScript Fondamentaux",
+            description: "Maîtrisez les bases de JavaScript, le langage essentiel pour le développement web moderne.",
+            level: "Débutant",
+            image: "/images/modules/javascript-basics.jpg",
+            progressPercent: 0,
+            lessons: [
+              { id: "3-1", title: "Variables et Types", type: "theory", duration: "20 min" },
+              { id: "3-2", title: "Fonctions", type: "theory", duration: "25 min" },
+              { id: "3-3", title: "Objets et tableaux", type: "exercise", duration: "30 min" },
+              { id: "3-4", title: "Événements et DOM", type: "exercise", duration: "30 min" }
+            ]
+          },
+          {
+            id: "4",
+            title: "React Fondamentaux",
+            description: "Apprenez React, la bibliothèque qui révolutionne la création d'interfaces utilisateur.",
+            level: "Intermédiaire",
+            image: "/images/modules/react-basics.jpg",
+            progressPercent: 0,
+            lessons: [
+              { id: "4-1", title: "Components et Props", type: "theory", duration: "20 min" },
+              { id: "4-2", title: "State et Cycle de vie", type: "theory", duration: "25 min" },
+              { id: "4-3", title: "Gestion des événements", type: "exercise", duration: "25 min" },
+              { id: "4-4", title: "Listes et clés", type: "exercise", duration: "20 min" }
             ]
           }
         ]);
@@ -62,7 +86,7 @@ export default function LessonsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Parcours d'apprentissage Next.js</h1>
+      <h1 className="text-3xl font-bold mb-6">Parcours d'apprentissage</h1>
       
       {loading ? (
         <div className="flex justify-center items-center h-64">
@@ -79,7 +103,7 @@ export default function LessonsPage() {
               <p className="text-gray-600 mb-4">{module.description}</p>
               
               <div className="space-y-2 mb-4">
-                {module.content && module.content.map((lesson, index) => (
+                {module.lessons && module.lessons.map((lesson, index) => (
                   <div key={`${module.id}-${lesson.id}`} className="flex items-center">
                     <div className="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center mr-2">
                       <span className="text-xs font-medium text-indigo-600">{index + 1}</span>
@@ -93,7 +117,7 @@ export default function LessonsPage() {
               
               <div className="flex justify-between items-center">
                 <div className="text-sm text-gray-500">
-                  <span>{module.content ? module.content.length : 0} leçons</span> • <span>{module.duration}</span>
+                  <span>{module.lessons ? module.lessons.length : 0} leçons</span> • <span>{module.duration || "Variable"}</span>
                 </div>
                 <Link href={`/lessons/module/${module.id}`} className="text-indigo-600 font-medium hover:text-indigo-800">
                   Voir le module →
