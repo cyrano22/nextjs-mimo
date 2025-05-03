@@ -1,7 +1,7 @@
 
 import './globals.css'
-import MainNavigation from '@/components/ui/MainNavigation'
-import Footer from '@/components/ui/Footer'
+import MainNavigation from '../components/ui/MainNavigation'
+import Footer from '../components/ui/Footer'
 
 export const metadata = {
   title: 'Next Mimo - Apprendre Next.js de façon interactive',
