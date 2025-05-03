@@ -205,10 +205,6 @@ export default function MainNavigation() {
           </div>
         </div>
       </nav>
-      <main className="mt-16"> {/* Added main tag and margin top */}
-        {/* Your page content goes here */}
-      </main>
-      <Footer />
-    </>
+      </>
   );
 }
