@@ -1,8 +1,7 @@
-
 "use client";
 
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Importer dynamiquement les composants client pour éviter les erreurs de prérendu
 const DashboardClient = dynamic(() => import('../../components/dashboard/DashboardClient'), {
@@ -15,6 +14,10 @@ const CourseVerificationComponent = dynamic(() => import('../../components/dashb
 
 const CourseStatistics = dynamic(() => import('../../components/dashboard/CourseStatistics'), {
   loading: () => <p>Chargement des statistiques des cours...</p>
+});
+
+const AIAssistant = dynamic(() => import('../../components/learning/AIAssistant'), {
+  loading: () => <p>Chargement de l'assistant IA...</p>
 });
 
 export default function DashboardPage() {
@@ -61,6 +64,7 @@ export default function DashboardPage() {
       {activeTab === 'overview' && <DashboardClient />}
       {activeTab === 'verification' && <CourseVerificationComponent />}
       {activeTab === 'statistics' && <CourseStatistics />}
+      <AIAssistant /> {/* Ajout de l'assistant IA */}
     </div>
   );
 }
