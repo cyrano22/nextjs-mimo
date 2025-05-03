@@ -1,90 +1,31 @@
+"use client";
 
 import { useState, useEffect } from 'react';
 
 export default function TechRadar() {
-  const [techCategories, setTechCategories] = useState([
-    {
-      name: "Nouveautés Next.js",
-      description: "Dernières fonctionnalités de Next.js",
-      items: [
-        { 
-          name: "Next.js 14.3", 
-          status: "adopted", 
-          description: "Dernière version stable avec performance améliorée",
-          releaseDate: "2023-04-05",
-          learnMoreUrl: "/lessons/module/next-advanced/lesson/next14-features"
-        },
-        { 
-          name: "Server Actions", 
-          status: "assess", 
-          description: "Mutations de données côté serveur avec une syntaxe déclarative",
-          releaseDate: "2023-03-10",
-          learnMoreUrl: "/lessons/module/next-advanced/lesson/server-actions"
-        },
-        { 
-          name: "Turbopack", 
-          status: "trial", 
-          description: "Successeur de Webpack avec compilation 10x plus rapide",
-          releaseDate: "2022-10-25",
-          learnMoreUrl: "/lessons/module/next-advanced/lesson/turbopack"
+  const [techCategories, setTechCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Récupérer les données dynamiques du radar technologique
+    fetch('/api/tech-radar')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des données du radar technologique');
         }
-      ]
-    },
-    {
-      name: "Frameworks UI",
-      description: "Bibliothèques UI modernes pour Next.js",
-      items: [
-        { 
-          name: "Shadcn UI", 
-          status: "adopted", 
-          description: "Composants réutilisables sans dépendance externe",
-          releaseDate: "2022-12-15",
-          learnMoreUrl: "/lessons/module/ui-frameworks/lesson/shadcn"
-        },
-        { 
-          name: "Tailwind CSS", 
-          status: "adopted", 
-          description: "Framework CSS utilitaire hautement personnalisable",
-          releaseDate: "2019-11-01",
-          learnMoreUrl: "/lessons/module/ui-frameworks/lesson/tailwind"
-        },
-        { 
-          name: "Radix UI", 
-          status: "trial", 
-          description: "Composants UI sans style avec excellente accessibilité",
-          releaseDate: "2021-06-10",
-          learnMoreUrl: "/lessons/module/ui-frameworks/lesson/radix"
-        }
-      ]
-    },
-    {
-      name: "Outils de développement",
-      description: "Outils pour améliorer le développement Next.js",
-      items: [
-        { 
-          name: "Next.js DevTools", 
-          status: "assess", 
-          description: "Outils officiels de débogage pour Next.js",
-          releaseDate: "2023-01-20",
-          learnMoreUrl: "/lessons/module/tools/lesson/nextjs-devtools"
-        },
-        { 
-          name: "TypeScript", 
-          status: "adopted", 
-          description: "Typage statique pour JavaScript, intégré à Next.js",
-          releaseDate: "2018-05-04",
-          learnMoreUrl: "/lessons/module/typescript/lesson/intro"
-        },
-        { 
-          name: "Prettier", 
-          status: "adopted", 
-          description: "Formateur de code opinioné pour codebase cohérente",
-          releaseDate: "2017-01-10",
-          learnMoreUrl: "/lessons/module/tools/lesson/prettier"
-        }
-      ]
-    }
-  ]);
+        return response.json();
+      })
+      .then(data => {
+        setTechCategories(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Erreur TechRadar:', err);
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   // Statuts possibles: adopted (vert), trial (jaune), assess (orange), hold (rouge)
   const getStatusColor = (status) => {
@@ -107,6 +48,37 @@ export default function TechRadar() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="bg-white rounded-lg shadow-md border p-6 my-6">
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500"></div>
+          <span className="ml-3 text-gray-600">Chargement du radar technologique...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg shadow-md border p-6 my-6">
+        <div className="flex items-center text-red-500 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h2 className="text-xl font-bold">Erreur de chargement</h2>
+        </div>
+        <p className="text-gray-600">{error}</p>
+        <button 
+          className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+          onClick={() => window.location.reload()}
+        >
+          Réessayer
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md border p-6 my-6">
       <div className="flex items-center mb-6">
@@ -120,13 +92,13 @@ export default function TechRadar() {
           <p className="text-gray-600">Restez à jour avec les dernières technologies Next.js et l'écosystème React</p>
         </div>
       </div>
-      
+
       <div className="space-y-8">
         {techCategories.map((category, catIndex) => (
           <div key={catIndex} className="border-b pb-6 last:border-b-0 last:pb-0">
             <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
             <p className="text-gray-600 mb-4">{category.description}</p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {category.items.map((item, itemIndex) => (
                 <div key={itemIndex} className="border rounded-lg overflow-hidden">
