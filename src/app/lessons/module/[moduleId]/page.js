@@ -1,6 +1,5 @@
-import Link from 'next/link';
-
-export default async function ModulePage({ params }) {
+// Ce fichier est remplacé par page.tsx
+export { default } from './page.tsx';
   const moduleId = params.moduleId;
 
   // Fetch module data from API (replace with your actual API endpoint)

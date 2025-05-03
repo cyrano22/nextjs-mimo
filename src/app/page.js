@@ -1,29 +1,6 @@
 
-"use client";
-
-import React from "react";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import MainNavigation from "../components/ui/MainNavigation";
-
-// Types pour les features et les modules de cours
-interface Feature {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-interface CourseModule {
-  title: string;
-  description: string;
-  image: string;
-  level: string;
-  lessons: number;
-  duration: string;
-  path: string;
-}
-
-export default function HomePage() {
+// Ce fichier est remplacé par page.tsx
+export { default } from './page.tsx';
   const [activeFeature, setActiveFeature] = useState(0);
 
   // Changer automatiquement la fonctionnalité mise en avant
