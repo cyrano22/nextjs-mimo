@@ -90,17 +90,15 @@ export default function LearningSection({
       label: "Exemple",
       content: (
         <div className="space-y-4">
-          {example?.description && <p className="text-gray-700">{example.description}</p>}
-          {example?.code && (
-            <CodeEditor
-              initialCode={example.code}
-              language={example?.language || "javascript"}
-              height="250px"
-              showPreview={true}
-              autoPreview={true}
-              readOnly={example?.readOnly !== false}
-            />
-          )}
+          <p className="text-gray-700">{example.description}</p>
+          <CodeEditor
+            initialCode={example.code}
+            language={example.language}
+            height="250px"
+            showPreview={true}
+            autoPreview={true}
+            readOnly={example.readOnly !== false}
+          />
           <button
             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
             onClick={() => {
@@ -175,11 +173,9 @@ export default function LearningSection({
             Points clés à retenir
           </h3>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
-            {keyPoints && Array.isArray(keyPoints) ? keyPoints.map((point, index) => (
+            {keyPoints.map((point, index) => (
               <li key={index}>{point}</li>
-            )) : (
-              <li>Révision des concepts clés de JavaScript présentés dans cette leçon.</li>
-            )}
+            ))}
           </ul>
           <div className="bg-indigo-50 border border-indigo-100 rounded-md p-4 mt-6">
             <p className="text-indigo-700">

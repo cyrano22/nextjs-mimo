@@ -1,4 +1,3 @@
-
 # NextMimo - Application d'apprentissage Next.js interactive et gamifiée
 
 Cette application est une plateforme d'apprentissage interactive et gamifiée pour Next.js, inspirée par Mimo. Elle permet aux utilisateurs d'apprendre Next.js de manière engageante, du niveau débutant au niveau expert, tout en construisant un portfolio professionnel.

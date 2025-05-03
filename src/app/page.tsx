@@ -35,92 +35,80 @@ export default function HomePage() {
   }, []);
 
   // Données des fonctionnalités
-  const features: Feature[] = [
-    {
-      title: "Apprentissage interactif",
-      description:
-        "Apprenez Next.js à travers des leçons interactives avec visualisation en temps réel du code que vous écrivez.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-indigo-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-          />
+ // 1. Mettez à jour votre type Feature pour inclure les propriétés manquantes (en optionnel)
+interface Feature {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  subtitle?: string;  // Propriété ajoutée
+  details?: string;   // Propriété ajoutée
+  codeExample?: string; // Propriété ajoutée
+}
+
+// 2. Mettez à jour votre tableau features avec les nouvelles propriétés
+const features: Feature[] = [
+  {
+    title: "Apprentissage interactif",
+    description: "Apprenez Next.js à travers des leçons interactives avec visualisation en temps réel du code que vous écrivez.",
+    subtitle: "Éditeur de code en temps réel",
+    details: "Modifiez le code et voyez immédiatement les résultats avec notre interface interactive",
+    codeExample: "React, useState, useEffect",
+    icon: (
+      <div className="relative">
+        <div className="absolute -inset-0.5 bg-indigo-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-indigo-600 relative z-10 group-hover:text-indigo-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
-      ),
-    },
-    {
-      title: "Parcours progressif",
-      description:
-        "Évoluez du niveau débutant au niveau expert avec un parcours d'apprentissage structuré et adapté à votre rythme.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-indigo-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-          />
+      </div>
+    ),
+  },
+  {
+    title: "Parcours progressif",
+    description: "Évoluez du niveau débutant au niveau expert avec un parcours d'apprentissage structuré et adapté à votre rythme.",
+    subtitle: "Apprentissage structuré",
+    details: "Suivez un chemin d'apprentissage clairement défini avec des objectifs à chaque étape",
+    codeExample: "React, Components, Props",
+    icon: (
+      <div className="relative">
+        <div className="absolute -inset-0.5 bg-green-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-green-600 relative z-10 group-hover:text-green-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
-      ),
-    },
-    {
-      title: "Système de gamification",
-      description:
-        "Gagnez des points XP, débloquez des badges et suivez votre progression pour rester motivé tout au long de votre apprentissage.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-indigo-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-          />
+      </div>
+    ),
+  },
+  {
+    title: "Système de gamification",
+    description: "Gagnez des points XP, débloquez des badges et suivez votre progression pour rester motivé tout au long de votre apprentissage.",
+    subtitle: "Apprentissage ludique",
+    details: "Restez motivé grâce à notre système de récompenses et de suivi de progression",
+    codeExample: "React, State Management",
+    icon: (
+      <div className="relative">
+        <div className="absolute -inset-0.5 bg-purple-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-purple-600 relative z-10 group-hover:text-purple-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
         </svg>
-      ),
-    },
-    {
-      title: "Portfolio professionnel",
-      description:
-        "Créez un portfolio professionnel à partir des projets que vous réalisez pendant votre parcours d'apprentissage.",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-indigo-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-          />
+      </div>
+    ),
+  },
+  {
+    title: "Portfolio professionnel",
+    description: "Créez un portfolio professionnel à partir des projets que vous réalisez pendant votre parcours d'apprentissage.",
+    subtitle: "Projets concrets",
+    details: "Développez des projets réels que vous pouvez présenter à votre future employeur",
+    codeExample: "Next.js, API Routes, Static Generation",
+    icon: (
+      <div className="relative">
+        <div className="absolute -inset-0.5 bg-orange-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-orange-600 relative z-10 group-hover:text-orange-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
-      ),
-    },
-  ];
+      </div>
+    ),
+  },
+];
+
 
   // Données des modules de cours
   const courseModules: CourseModule[] = [
@@ -179,7 +167,7 @@ export default function HomePage() {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
                 <span className="block text-gray-900">Apprenez Next.js</span>
                 <span className="block title-gradient mt-1">
-                  de façon interactive
+                  Apprenez de façon interactive
                 </span>
               </h1>
 
@@ -278,75 +266,99 @@ export default function HomePage() {
       </section>
 
       {/* Section Fonctionnalités */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              Une expérience d'apprentissage unique
+      <section className="relative py-28 bg-gradient-to-br from-white via-indigo-50 to-[#f8fbff]">
+        {/* Éléments décoratifs géométriques */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-b from-indigo-100/20 to-transparent -z-10" />
+        <div className="absolute left-0 bottom-0 w-40 h-40 bg-indigo-600/5 rounded-full blur-[100px]" />
+
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <span className="inline-block mb-4 text-sm font-semibold text-indigo-600 uppercase tracking-widest">
+              Maîtrise Next.js 14
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Apprentissage Par{" "}
+              <span className="bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
+                l'Expérience
+              </span>
             </h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-              Découvrez comment notre approche interactive et gamifiée rend
-              l'apprentissage de Next.js plus efficace et engageant.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Une méthodologie professionnelle combinant théorie approfondie et
+              mise en pratique immédiate.
             </p>
           </div>
 
-          <div className="mt-16">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-16">
-              {/* Fonctionnalité mise en avant */}
-              <div className="relative">
-                <div className="aspect-w-3 aspect-h-2">
-                  <div className="h-full w-full rounded-2xl bg-gray-100 overflow-hidden shadow-lg">
-                    <div className="h-full w-full p-8 flex items-center justify-center">
-                      <div
-                        key={activeFeature}
-                        className="text-center transition-opacity duration-500"
-                      >
-                        {features[activeFeature].icon}
-                        <h3 className="mt-6 text-xl font-bold text-gray-900">
-                          {features[activeFeature].title}
-                        </h3>
-                        <p className="mt-2 text-base text-gray-600">
-                          {features[activeFeature].description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Indicateurs */}
-                <div className="mt-4 flex justify-center space-x-2">
-                  {features.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveFeature(index)}
-                      className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                        index === activeFeature
-                          ? "bg-indigo-600"
-                          : "bg-gray-300"
+          <div className="grid lg:grid-cols-3 gap-10">
+            {/* Colonne des fonctionnalités */}
+            <div className="space-y-8 lg:col-span-1">
+              {features.map((feature, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setActiveFeature(idx)}
+                  className={`p-6 rounded-2xl cursor-pointer transition-all ${
+                    idx === activeFeature
+                      ? "bg-white shadow-2xl border-2 border-indigo-100/50"
+                      : "hover:bg-white/50 hover:shadow-lg"
+                  }`}
+                >
+                  <div className="flex items-start gap-5">
+                    <div
+                      className={`p-3 rounded-lg ${
+                        idx === activeFeature
+                          ? "bg-indigo-600/10 text-indigo-600"
+                          : "bg-gray-100 text-gray-600"
                       }`}
-                      aria-label={`Sélectionner la fonctionnalité ${
-                        index + 1
-                      }: ${features[index].title}`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Liste des fonctionnalités */}
-              <div className="space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12">
-                {features.map((feature, index) => (
-                  <div key={index} className="relative">
-                    <div className="text-lg font-medium text-gray-900">
-                      <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-100 text-indigo-600 -left-16">
-                        {feature.icon}
-                      </div>
-                      {feature.title}
+                    >
+                      {feature.icon}
                     </div>
-                    <div className="mt-2 text-base text-gray-600">
-                      {feature.description}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        {feature.description}
+                      </p>
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Carte de visualisation principale */}
+            <div className="lg:col-span-2 relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-[2rem] transform rotate-1 shadow-xl" />
+              <div className="relative h-full min-h-[500px] bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-100">
+                <div className="h-full flex flex-col">
+                  <div className="p-8 border-b border-gray-100 bg-gray-50/50">
+                    <div className="flex items-center gap-1.5 text-sm font-medium text-gray-600">
+                      <span className="w-2 h-2 rounded-full bg-green-500" />
+                      Sandbox Live — {features[activeFeature].title}
+                    </div>
+                  </div>
+
+                  <div className="flex-1 grid lg:grid-cols-2 gap-8 p-8">
+                    <div className="space-y-6">
+                      <div className="p-5 bg-gray-50 rounded-xl border border-gray-200">
+                        {features[activeFeature].icon}
+                        <h3 className="mt-4 text-xl font-semibold text-gray-900">
+                          {features[activeFeature].subtitle}
+                        </h3>
+                      </div>
+                      <p className="text-gray-600 leading-relaxed">
+                        {features[activeFeature].details}
+                      </p>
+                    </div>
+                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-2xl p-5">
+                      <div className="h-full bg-gray-800 rounded-lg overflow-hidden">
+                        {/* Éditeur de code simulé */}
+                        <div className="p-4 bg-gray-900/50 text-sm font-mono text-gray-300">
+                          <span className="text-blue-400">import</span>{" "}
+                          {features[activeFeature].codeExample}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

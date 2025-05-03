@@ -1,57 +1,60 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import LearningPathProgression from '../../components/learning/LearningPathProgression';
-import ModuleDetail from '../../components/learning/ModuleDetail';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import LearningPathProgression from "../../components/learning/LearningPathProgression";
+import ModuleDetail from "../../components/learning/ModuleDetail";
 
 export default function LearningPathPage() {
+  const router = useRouter();
   const [currentModule, setCurrentModule] = useState(null);
   const [completedModules, setCompletedModules] = useState([]);
-  
+
   // Simuler le chargement des données utilisateur
   useEffect(() => {
     // Données simulées
     setCurrentModule({
       id: 3,
       title: "Routing avec Next.js",
-      level: 1
+      level: 1,
     });
-    
+
     setCompletedModules([
       { id: 1, title: "Introduction à Next.js" },
-      { id: 2, title: "Composants et Props" }
+      { id: 2, title: "Composants et Props" },
     ]);
   }, []);
-  
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         duration: 0.5,
         when: "beforeChildren",
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
-  
+
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { duration: 0.3 }
-    }
+      transition: { duration: 0.3 },
+    },
   };
-  
+
   // Données simulées pour les modules
   const modules = [
     {
       id: 1,
       title: "Introduction à Next.js",
-      description: "Découvrez les bases de Next.js et comment créer votre première application.",
+      description:
+        "Découvrez les bases de Next.js et comment créer votre première application.",
       level: "Débutant",
       xpReward: 150,
       duration: "2 heures",
@@ -62,7 +65,7 @@ export default function LearningPathPage() {
           type: "theory",
           duration: "10 min",
           xpReward: 20,
-          completed: true
+          completed: true,
         },
         {
           id: 2,
@@ -70,7 +73,7 @@ export default function LearningPathPage() {
           type: "exercise",
           duration: "15 min",
           xpReward: 30,
-          completed: true
+          completed: true,
         },
         {
           id: 3,
@@ -79,7 +82,7 @@ export default function LearningPathPage() {
           duration: "20 min",
           xpReward: 40,
           completed: true,
-          contributeToPortfolio: true
+          contributeToPortfolio: true,
         },
         {
           id: 4,
@@ -87,7 +90,7 @@ export default function LearningPathPage() {
           type: "theory",
           duration: "15 min",
           xpReward: 25,
-          completed: true
+          completed: true,
         },
         {
           id: 5,
@@ -96,14 +99,15 @@ export default function LearningPathPage() {
           duration: "30 min",
           xpReward: 60,
           completed: true,
-          contributeToPortfolio: true
-        }
-      ]
+          contributeToPortfolio: true,
+        },
+      ],
     },
     {
       id: 2,
       title: "Composants et Props",
-      description: "Apprenez à créer des composants réutilisables et à gérer les props en Next.js.",
+      description:
+        "Apprenez à créer des composants réutilisables et à gérer les props en Next.js.",
       level: "Débutant",
       xpReward: 180,
       duration: "2.5 heures",
@@ -114,7 +118,7 @@ export default function LearningPathPage() {
           type: "theory",
           duration: "15 min",
           xpReward: 25,
-          completed: true
+          completed: true,
         },
         {
           id: 7,
@@ -122,7 +126,7 @@ export default function LearningPathPage() {
           type: "exercise",
           duration: "20 min",
           xpReward: 35,
-          completed: true
+          completed: true,
         },
         {
           id: 8,
@@ -130,7 +134,7 @@ export default function LearningPathPage() {
           type: "theory",
           duration: "15 min",
           xpReward: 25,
-          completed: true
+          completed: true,
         },
         {
           id: 9,
@@ -138,7 +142,7 @@ export default function LearningPathPage() {
           type: "exercise",
           duration: "25 min",
           xpReward: 45,
-          completed: true
+          completed: true,
         },
         {
           id: 10,
@@ -147,14 +151,15 @@ export default function LearningPathPage() {
           duration: "35 min",
           xpReward: 70,
           completed: true,
-          contributeToPortfolio: true
-        }
-      ]
+          contributeToPortfolio: true,
+        },
+      ],
     },
     {
       id: 3,
       title: "Routing avec Next.js",
-      description: "Maîtrisez le système de routing de Next.js pour créer des applications multi-pages.",
+      description:
+        "Maîtrisez le système de routing de Next.js pour créer des applications multi-pages.",
       level: "Débutant",
       xpReward: 200,
       duration: "3 heures",
@@ -165,7 +170,7 @@ export default function LearningPathPage() {
           type: "theory",
           duration: "15 min",
           xpReward: 25,
-          completed: true
+          completed: true,
         },
         {
           id: 12,
@@ -173,7 +178,7 @@ export default function LearningPathPage() {
           type: "exercise",
           duration: "25 min",
           xpReward: 45,
-          completed: false
+          completed: false,
         },
         {
           id: 13,
@@ -181,7 +186,7 @@ export default function LearningPathPage() {
           type: "exercise",
           duration: "20 min",
           xpReward: 35,
-          completed: false
+          completed: false,
         },
         {
           id: 14,
@@ -189,7 +194,7 @@ export default function LearningPathPage() {
           type: "theory",
           duration: "15 min",
           xpReward: 25,
-          completed: false
+          completed: false,
         },
         {
           id: 15,
@@ -198,17 +203,18 @@ export default function LearningPathPage() {
           duration: "45 min",
           xpReward: 90,
           completed: false,
-          contributeToPortfolio: true
-        }
-      ]
-    }
+          contributeToPortfolio: true,
+        },
+      ],
+    },
   ];
-  
+
   const handleLessonSelect = (lesson) => {
     console.log("Leçon sélectionnée:", lesson);
     // Naviguer vers la page de la leçon
+    router.push(`/lessons/module/${lesson.id}`);
   };
-  
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <motion.div
@@ -218,28 +224,33 @@ export default function LearningPathPage() {
         className="space-y-8"
       >
         <motion.div variants={itemVariants}>
-          <h1 className="text-3xl font-bold text-gray-900">Parcours d'apprentissage Next.js</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Parcours d'apprentissage Next.js
+          </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Suivez ce parcours structuré pour maîtriser Next.js, du niveau débutant au niveau expert.
+            Suivez ce parcours structuré pour maîtriser Next.js, du niveau
+            débutant au niveau expert.
           </p>
         </motion.div>
-        
+
         {/* Progression */}
-        <LearningPathProgression 
-          currentModule={currentModule} 
-          completedModules={completedModules} 
+        <LearningPathProgression
+          currentModule={currentModule}
+          completedModules={completedModules}
         />
-        
+
         {/* Modules */}
         <motion.div variants={itemVariants}>
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Modules disponibles</h2>
-          
+          <h2 className="text-xl font-bold text-gray-900 mb-6">
+            Modules disponibles
+          </h2>
+
           <div className="space-y-6">
             {modules.map((module) => (
-              <ModuleDetail 
-                key={module.id} 
-                module={module} 
-                onLessonSelect={handleLessonSelect} 
+              <ModuleDetail
+                key={module.id}
+                module={module}
+                onLessonSelect={handleLessonSelect}
               />
             ))}
           </div>

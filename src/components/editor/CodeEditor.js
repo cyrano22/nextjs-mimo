@@ -1,228 +1,195 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import CodePreviewSandbox from './CodePreviewSandbox';
 
-export default function CodeEditor({ initialCode, solution, language = 'jsx' }) {
+export default function CodeEditor({ 
+  initialCode = '', 
+  language = 'javascript',
+  height = '400px',
+  onCodeChange,
+  onCodeRun,
+  readOnly = false,
+  showPreview = true,
+  autoPreview = true
+}) {
   const [code, setCode] = useState(initialCode);
-  const [result, setResult] = useState(null);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [showSolution, setShowSolution] = useState(false);
-  const [showPreview, setShowPreview] = useState(true);
-  const previewRef = useRef(null);
+  const [previewCode, setPreviewCode] = useState(initialCode);
+  const [previewVisible, setPreviewVisible] = useState(showPreview);
+  const [splitView, setSplitView] = useState(true);
+  const [theme, setTheme] = useState('light');
   
-  // Mettre à jour la prévisualisation lorsque le code change
+  // Mettre à jour le code de prévisualisation automatiquement ou lors de l'exécution manuelle
   useEffect(() => {
-    if (showPreview && previewRef.current) {
-      updatePreview();
-    }
-  }, [code, showPreview]);
-  
-  // Fonction pour mettre à jour la prévisualisation
-  const updatePreview = () => {
-    if (!previewRef.current) return;
-    
-    try {
-      // Créer un contenu HTML sécurisé pour la prévisualisation
-      const previewContent = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <style>
-              body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-                margin: 0;
-                padding: 16px;
-                color: #333;
-              }
-              /* Styles supplémentaires pour la prévisualisation */
-              .preview-container {
-                border: 1px solid #e2e8f0;
-                border-radius: 0.375rem;
-                overflow: hidden;
-              }
-            </style>
-          </head>
-          <body>
-            <div id="root"></div>
-            <script>
-              try {
-                // Fonction pour rendre le JSX (version simplifiée)
-                function renderComponent() {
-                  const component = (function() {
-                    ${language === 'jsx' ? 'return ' + code : code}
-                  })();
-                  
-                  document.getElementById('root').innerHTML = typeof component === 'string' 
-                    ? component 
-                    : JSON.stringify(component);
-                }
-                renderComponent();
-              } catch (error) {
-                document.getElementById('root').innerHTML = '<div style="color: red;">Erreur: ' + error.message + '</div>';
-              }
-            </script>
-          </body>
-        </html>
-      `;
+    if (autoPreview) {
+      const timer = setTimeout(() => {
+        setPreviewCode(code);
+      }, 1000); // Délai pour éviter trop de rendus pendant la frappe
       
-      // Mettre à jour l'iframe avec le contenu
-      const iframe = previewRef.current;
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      iframeDoc.open();
-      iframeDoc.write(previewContent);
-      iframeDoc.close();
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de la prévisualisation:", error);
+      return () => clearTimeout(timer);
     }
+  }, [code, autoPreview]);
+  
+  const handleCodeChange = (e) => {
+    const newCode = e.target.value;
+    setCode(newCode);
+    if (onCodeChange) onCodeChange(newCode);
   };
   
-  // Vérifier si le code est correct
-  const checkCode = () => {
-    // Dans une application réelle, nous aurions une vérification plus sophistiquée
-    // Ici, nous faisons une comparaison simple en ignorant les espaces
-    const normalizedUserCode = code.replace(/\s+/g, ' ').trim();
-    const normalizedSolution = solution.replace(/\s+/g, ' ').trim();
-    
-    const correct = normalizedUserCode.includes('return') && 
-                   normalizedUserCode.includes('<h1>') && 
-                   normalizedUserCode.includes('<p>');
-    
-    setIsCorrect(correct);
-    
-    if (correct) {
-      setResult({
-        status: 'success',
-        message: 'Bravo ! Votre code fonctionne correctement.'
-      });
-      
-      // Sauvegarder le projet dans le portfolio (sera implémenté plus tard)
-      saveToPortfolio();
-    } else {
-      setResult({
-        status: 'error',
-        message: 'Votre code ne produit pas le résultat attendu. Essayez encore.'
-      });
-    }
+  const handleRunCode = () => {
+    setPreviewCode(code);
+    if (onCodeRun) onCodeRun(code);
   };
   
-  // Fonction pour sauvegarder le projet dans le portfolio
-  const saveToPortfolio = () => {
-    // Cette fonction sera implémentée dans l'étape 014
-    console.log("Projet sauvegardé pour le portfolio");
-    // Dans une implémentation réelle, nous enverrions le code au serveur
-  };
-  
-  // Réinitialiser le code
-  const resetCode = () => {
+  const handleReset = () => {
     setCode(initialCode);
-    setResult(null);
-    setIsCorrect(false);
+    setPreviewCode(initialCode);
+    if (onCodeChange) onCodeChange(initialCode);
   };
   
-  // Afficher/masquer la solution
-  const toggleSolution = () => {
-    setShowSolution(!showSolution);
-  };
-  
-  // Afficher/masquer la prévisualisation
   const togglePreview = () => {
-    setShowPreview(!showPreview);
+    setPreviewVisible(!previewVisible);
+  };
+  
+  const toggleSplitView = () => {
+    setSplitView(!splitView);
+  };
+  
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
   
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Éditeur de code */}
-        <div className="border border-gray-300 rounded-md overflow-hidden">
-          <div className="bg-gray-100 px-4 py-2 flex justify-between items-center">
-            <span className="font-medium">Éditeur de code</span>
-            <div className="flex space-x-2">
-              <button 
-                onClick={resetCode}
-                className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded"
+    <div className="w-full rounded-lg border border-gray-200 overflow-hidden">
+      {/* Barre d'outils */}
+      <div className="flex items-center justify-between bg-gray-100 px-4 py-2 border-b border-gray-200">
+        <div className="flex items-center space-x-2">
+          <span className="text-sm font-medium text-gray-700">
+            {language.charAt(0).toUpperCase() + language.slice(1)}
+          </span>
+          
+          {!readOnly && (
+            <>
+              <button
+                onClick={handleRunCode}
+                className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+              >
+                Exécuter
+              </button>
+              
+              <button
+                onClick={handleReset}
+                className="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
               >
                 Réinitialiser
               </button>
-              <button 
-                onClick={toggleSolution}
-                className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded"
-              >
-                {showSolution ? 'Cacher solution' : 'Voir solution'}
-              </button>
-            </div>
-          </div>
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="w-full h-64 p-4 font-mono text-sm focus:outline-none"
-            spellCheck="false"
-          />
+            </>
+          )}
         </div>
         
-        {/* Prévisualisation du rendu */}
-        <div className="border border-gray-300 rounded-md overflow-hidden">
-          <div className="bg-gray-100 px-4 py-2 flex justify-between items-center">
-            <span className="font-medium">Prévisualisation</span>
-            <button 
-              onClick={togglePreview}
-              className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded"
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={togglePreview}
+            className={`p-1 rounded ${previewVisible ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}
+            title={previewVisible ? "Masquer la prévisualisation" : "Afficher la prévisualisation"}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+              <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+            </svg>
+          </button>
+          
+          {previewVisible && (
+            <button
+              onClick={toggleSplitView}
+              className={`p-1 rounded ${splitView ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}
+              title={splitView ? "Vue plein écran" : "Vue partagée"}
             >
-              {showPreview ? 'Masquer' : 'Afficher'}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm3 0v12h10V4H6z" clipRule="evenodd" />
+              </svg>
             </button>
-          </div>
-          <div className={`h-64 ${showPreview ? 'block' : 'hidden'}`}>
-            <iframe
-              ref={previewRef}
-              title="Prévisualisation du code"
-              className="w-full h-full border-none"
-              sandbox="allow-scripts"
-            />
-          </div>
-          {!showPreview && (
-            <div className="h-64 flex items-center justify-center bg-gray-50">
-              <p className="text-gray-500">Prévisualisation masquée</p>
-            </div>
           )}
+          
+          <button
+            onClick={toggleTheme}
+            className={`p-1 rounded ${theme === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-700'}`}
+            title={theme === 'light' ? "Thème sombre" : "Thème clair"}
+          >
+            {theme === 'light' ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
       
-      {/* Solution */}
-      {showSolution && (
-        <div className="border border-gray-300 rounded-md overflow-hidden">
-          <div className="bg-gray-100 px-4 py-2">
-            <span className="font-medium">Solution</span>
+      {/* Contenu de l'éditeur */}
+      <div className={`flex ${splitView && previewVisible ? 'flex-col md:flex-row' : 'flex-col'}`}>
+        {/* Zone d'édition de code */}
+        <div className={`${splitView && previewVisible ? 'md:w-1/2' : 'w-full'} ${!previewVisible || !splitView ? 'block' : ''}`}>
+          <div className="relative" style={{ height }}>
+            <div className="absolute inset-0 flex">
+              {/* Numéros de ligne */}
+              <div className={`w-10 text-right pr-2 pt-2 select-none font-mono text-xs ${theme === 'dark' ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500'}`}>
+                {code.split('\n').map((_, i) => (
+                  <div key={i} className="leading-5">
+                    {i + 1}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Éditeur de code */}
+              <textarea
+                value={code}
+                onChange={handleCodeChange}
+                className={`flex-1 p-2 pt-2 font-mono text-sm resize-none focus:outline-none leading-5 ${
+                  theme === 'dark' 
+                    ? 'bg-gray-900 text-gray-100' 
+                    : 'bg-white text-gray-800'
+                }`}
+                style={{ 
+                  height: '100%',
+                  tabSize: 2,
+                  whiteSpace: 'pre',
+                  overflowWrap: 'normal',
+                  overflowX: 'auto'
+                }}
+                readOnly={readOnly}
+                spellCheck="false"
+                autoCapitalize="off"
+                autoComplete="off"
+                autoCorrect="off"
+                data-gramm="false"
+              />
+            </div>
           </div>
-          <pre className="p-4 font-mono text-sm bg-gray-50">{solution}</pre>
         </div>
-      )}
-      
-      {/* Boutons d'action */}
-      <div className="flex justify-between">
-        <button
-          onClick={checkCode}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
-        >
-          Exécuter le code
-        </button>
         
-        {isCorrect && (
-          <button
-            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+        {/* Zone de prévisualisation */}
+        {previewVisible && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`${splitView ? 'md:w-1/2 md:border-l' : 'w-full'} border-t md:border-t-0 border-gray-200`}
+            style={{ height: splitView ? height : 'auto' }}
           >
-            Continuer
-          </button>
+            <div className="p-4 h-full">
+              <CodePreviewSandbox 
+                code={previewCode} 
+                language={language} 
+                height={splitView ? "100%" : "300px"} 
+              />
+            </div>
+          </motion.div>
         )}
       </div>
-      
-      {/* Message de résultat */}
-      {result && (
-        <div className={`p-4 rounded-md ${result.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {result.message}
-          {result.status === 'success' && (
-            <p className="mt-2 text-sm">Ce projet a été ajouté à votre portfolio !</p>
-          )}
-        </div>
-      )}
     </div>
   );
 }
