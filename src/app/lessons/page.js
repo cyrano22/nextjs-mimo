@@ -15,7 +15,38 @@ export default function LessonsPage() {
         if (!res.ok) throw new Error('Failed to fetch modules');
         
         const data = await res.json();
-        setModules(data);
+        // Assurer que tous les modules ont lessons comme tableau
+        const normalizedData = data.map(module => {
+          // Si lessons est un nombre, transformer en tableau
+          if (typeof module.lessons === 'number' || !Array.isArray(module.lessons)) {
+            const lessonCount = typeof module.lessons === 'number' ? module.lessons : 0;
+            // Créer un tableau de leçons factices si nécessaire
+            const lessonArray = [];
+            if (module.content && Array.isArray(module.content)) {
+              // Convertir le contenu en leçons
+              return {
+                ...module,
+                lessons: module.content
+              };
+            } else {
+              // Générer des leçons génériques
+              for (let i = 0; i < lessonCount; i++) {
+                lessonArray.push({
+                  id: `${module.id}-${i+1}`,
+                  title: `Leçon ${i+1}`,
+                  type: "theory",
+                  duration: "20 min"
+                });
+              }
+              return {
+                ...module,
+                lessons: lessonArray
+              };
+            }
+          }
+          return module;
+        });
+        setModules(normalizedData);
       } catch (error) {
         console.error("Error fetching modules:", error);
         // Données de secours en cas d'échec de l'API
