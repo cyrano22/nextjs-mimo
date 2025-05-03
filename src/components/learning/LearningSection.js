@@ -90,15 +90,17 @@ export default function LearningSection({
       label: "Exemple",
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">{example.description}</p>
-          <CodeEditor
-            initialCode={example.code}
-            language={example.language}
-            height="250px"
-            showPreview={true}
-            autoPreview={true}
-            readOnly={example.readOnly !== false}
-          />
+          {example?.description && <p className="text-gray-700">{example.description}</p>}
+          {example?.code && (
+            <CodeEditor
+              initialCode={example.code}
+              language={example?.language || "javascript"}
+              height="250px"
+              showPreview={true}
+              autoPreview={true}
+              readOnly={example?.readOnly !== false}
+            />
+          )}
           <button
             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
             onClick={() => {
