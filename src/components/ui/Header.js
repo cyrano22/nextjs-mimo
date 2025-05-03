@@ -2,13 +2,24 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 
-export default function Header({ title, subtitle }) {
+export default function Header() {
   return (
-    <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl md:text-4xl font-bold">{title}</h1>
-        {subtitle && <p className="mt-2 text-lg md:text-xl">{subtitle}</p>}
+    <header className="bg-gradient-to-r from-indigo-700 to-purple-700 p-4 text-white">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <h1 className="text-3xl font-bold">NextMimo</h1>
+        <div className="flex space-x-4">
+          <Link href="/" className="hover:text-indigo-200 transition-colors">
+            Accueil
+          </Link>
+          <Link href="/lessons" className="hover:text-indigo-200 transition-colors">
+            Cours
+          </Link>
+          <Link href="/dashboard" className="hover:text-indigo-200 transition-colors">
+            Dashboard
+          </Link>
+        </div>
       </div>
     </header>
   );
