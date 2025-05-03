@@ -3,6 +3,37 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+/* Animations de base */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Pour la barre de navigation */
+.nav-scrolled {
+  @apply bg-white shadow-md;
+}
+
 /* Improved base styling */
 html {
   font-family: var(--font-geist-sans, ui-sans-serif, system-ui) !important;

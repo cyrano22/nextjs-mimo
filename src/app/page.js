@@ -5,7 +5,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white py-20">
-        <div className="container mx-auto px-4">
+        <main className="container mx-auto px-4"> {/*This is where the changes were applied */}
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Apprenez Next.js de manière interactive</h1>
             <p className="text-xl mb-8">Une plateforme d'apprentissage gamifiée pour maîtriser Next.js à travers des leçons interactives et des exercices pratiques</p>
@@ -18,12 +18,12 @@ export default function Home() {
               </Link>
             </div>
           </div>
-        </div>
+        </main> {/*This is where the changes were applied */}
       </section>
 
       {/* Features Section */}
       <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
+        <main className="container mx-auto px-4"> {/*This is where the changes were applied */}
           <h2 className="text-3xl font-bold text-center mb-12">Pourquoi apprendre avec nous ?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="card text-center">
@@ -54,12 +54,12 @@ export default function Home() {
               <p className="text-gray-600">Gagnez des points, débloquez des badges et montez en niveau tout en développant vos compétences</p>
             </div>
           </div>
-        </div>
+        </main> {/*This is where the changes were applied */}
       </section>
 
       {/* Modules Preview Section */}
       <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+        <main className="container mx-auto px-4"> {/*This is where the changes were applied */}
           <h2 className="text-3xl font-bold text-center mb-12">Ce que vous allez apprendre</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="card border-t-4 border-indigo-500">
@@ -91,18 +91,18 @@ export default function Home() {
               </Link>
             </div>
           </div>
-        </div>
+        </main> {/*This is where the changes were applied */}
       </section>
 
       {/* CTA Section */}
       <section className="py-16 bg-indigo-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+        <main className="container mx-auto px-4 text-center"> {/*This is where the changes were applied */}
           <h2 className="text-3xl font-bold mb-6">Prêt à commencer votre voyage Next.js ?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Rejoignez des milliers d'apprenants qui maîtrisent Next.js grâce à notre plateforme interactive et gamifiée</p>
           <Link href="/lessons" className="bg-white text-indigo-600 hover:bg-gray-100 font-medium py-3 px-6 rounded-md transition-colors inline-block">
             Commencer gratuitement
           </Link>
-        </div>
+        </main> {/*This is where the changes were applied */}
       </section>
 
       {/* Footer */}
