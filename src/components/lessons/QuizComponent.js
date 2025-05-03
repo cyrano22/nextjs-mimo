@@ -16,7 +16,15 @@ export default function QuizComponent({ quiz, onComplete }) {
     setIsSubmitted(false);
     setIsCorrect(false);
     setShowExplanation(false);
-    setQuizData(quiz);
+    
+    // Vérifier si le quiz a une structure avec des "questions" ou une seule question
+    if (quiz && quiz.questions) {
+      // Format multi-questions
+      setQuizData(quiz.questions[0]); // Prendre la première question par défaut
+    } else {
+      // Format question unique
+      setQuizData(quiz);
+    }
   }, [quiz]);
 
   const handleAnswerSelect = (index) => {
@@ -81,12 +89,19 @@ export default function QuizComponent({ quiz, onComplete }) {
       className="bg-white rounded-lg shadow-md overflow-hidden"
     >
       <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">
-          {quizData.question}
-        </h3>
+        {quizData?.title && (
+          <h3 className="text-xl font-bold text-gray-900 mb-4">
+            {quizData.title}
+          </h3>
+        )}
+        {quizData?.question && (
+          <h3 className="text-xl font-bold text-gray-900 mb-4">
+            {quizData.question}
+          </h3>
+        )}
 
         <div className="space-y-3 mb-6">
-          {quizData.options.map((option, index) => (
+          {quizData?.options?.map((option, index) => (
             <motion.button
               key={index}
               variants={variantButton}
@@ -95,7 +110,8 @@ export default function QuizComponent({ quiz, onComplete }) {
               whileTap={!isSubmitted ? "tap" : {}}
               animate={
                 isSubmitted 
-                  ? index === quizData.correctAnswer 
+                  ? (typeof quizData.correctAnswer === 'number' && index === quizData.correctAnswer) || 
+                    (typeof quizData.correctAnswer === 'string' && option === quizData.correctAnswer)
                     ? "correct" 
                     : selectedAnswer === index 
                       ? "incorrect" 
