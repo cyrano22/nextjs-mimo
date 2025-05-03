@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-export default function QuizComponent({ quiz, onComplete }) {
+export default function QuizComponent({ quiz = {}, onComplete }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -230,7 +230,7 @@ export default function QuizComponent({ quiz, onComplete }) {
             Difficulté: <span className="font-medium">{quizData.difficulty}</span>
           </div>
 
-          {quizData.points && (
+          {quizData && quizData.points && (
             <div className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
               +{quizData.points} XP
             </div>
