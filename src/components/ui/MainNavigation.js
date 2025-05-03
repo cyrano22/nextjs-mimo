@@ -88,6 +88,14 @@ export default function MainNavigation() {
             >
               React
             </Link>
+            <Link 
+              href="/javascript-fundamentals" 
+              className={`text-sm font-medium transition-colors ${
+                isScrolled ? 'text-gray-700 hover:text-indigo-600' : 'text-white hover:text-indigo-200'
+              }`}
+            >
+              JavaScript
+            </Link>
           </nav>
 
           {/* Login button */}
