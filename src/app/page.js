@@ -1,7 +1,8 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import MainNavigation from "../components/ui/MainNavigation";
 
@@ -370,7 +371,7 @@ export default function HomePage() {
             {courseModules.map((module, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg overflow-hidden shadow-lg transform transition-transform hover:-translate-y-1 duration-300"
+                className="card card-hover overflow-hidden transform transition-transform hover:-translate-y-1 duration-300"
               >
                 <div className="h-48 w-full bg-indigo-100 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 opacity-90"></div>
@@ -378,10 +379,10 @@ export default function HomePage() {
                     <div className="text-center text-white p-6">
                       <h3 className="text-2xl font-bold">{module.title}</h3>
                       <div className="mt-2 flex items-center justify-center space-x-2">
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-white bg-opacity-20">
+                        <span className="badge badge-primary bg-white bg-opacity-20">
                           {module.level}
                         </span>
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-white bg-opacity-20">
+                        <span className="badge badge-primary bg-white bg-opacity-20">
                           {module.lessons} leçons
                         </span>
                       </div>
@@ -430,7 +431,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <Link href={module.path} className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 w-full">
+                  <Link href={module.path} className="btn btn-primary w-full">
                     Commencer
                   </Link>
                 </div>
@@ -455,7 +456,7 @@ export default function HomePage() {
             <div className="mt-10">
               <Link
                 href="/learning-path"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50"
+                className="btn bg-white text-indigo-700 hover:bg-indigo-50 focus:ring-indigo-200"
               >
                 Commencer gratuitement
               </Link>
