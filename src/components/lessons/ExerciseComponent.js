@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ExerciseComponent({ exercise }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -49,13 +50,31 @@ export default function ExerciseComponent({ exercise }) {
   
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-lg">{exercise.title}</h3>
-      <p className="text-gray-700">{exercise.description}</p>
+      <motion.h3 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="font-medium text-lg"
+      >
+        {exercise.title}
+      </motion.h3>
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="text-gray-700"
+      >
+        {exercise.description}
+      </motion.p>
       
       <div className="space-y-2 mt-4">
-        {exercise.options.map((option) => (
-          <div 
+        {exercise.options.map((option, index) => (
+          <motion.div 
             key={option.id}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 + index * 0.05 }}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
             onClick={() => handleOptionToggle(option.id)}
             className={`p-3 border rounded-md cursor-pointer transition-colors ${
               selectedOptions.includes(option.id) 
@@ -83,15 +102,22 @@ export default function ExerciseComponent({ exercise }) {
               </div>
               <span>{option.text}</span>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
       
-      {feedback && (
-        <div className={`p-4 rounded-md ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {feedback.message}
-        </div>
-      )}
+      <AnimatePresence>
+        {feedback && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className={`p-4 rounded-md ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+          >
+            {feedback.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <div className="flex justify-between mt-4">
         {!isSubmitted ? (

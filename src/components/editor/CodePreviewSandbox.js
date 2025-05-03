@@ -6,7 +6,16 @@ export default function CodePreviewSandbox({ code, language = 'jsx', height = '3
   const [iframeKey, setIframeKey] = useState(Date.now());
   const [error, setError] = useState(null);
 
-  // Fonction pour rafraîchir la prévisualisation
+  // Mettre à jour automatiquement la prévisualisation quand le code change
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      setIframeKey(Date.now());
+    }, 800); // Délai pour éviter trop de rafraîchissements
+    
+    return () => clearTimeout(debounceTimer);
+  }, [code]);
+  
+  // Fonction pour rafraîchir manuellement la prévisualisation
   const refreshPreview = () => {
     setIframeKey(Date.now());
   };
@@ -170,15 +179,31 @@ export default function CodePreviewSandbox({ code, language = 'jsx', height = '3
     <div className="code-preview-sandbox">
       <div className="bg-gray-100 px-4 py-2 flex justify-between items-center rounded-t-md border border-gray-300">
         <span className="font-medium">Prévisualisation</span>
-        <button 
-          onClick={refreshPreview}
-          className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded"
-        >
-          Rafraîchir
-        </button>
+        <div className="flex items-center space-x-2">
+          <div className="text-xs text-gray-500">
+            Auto-refresh {code ? 'activé' : 'désactivé'}
+          </div>
+          <button 
+            onClick={refreshPreview}
+            className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Rafraîchir
+          </button>
+        </div>
       </div>
       
-      <div className="border border-gray-300 border-t-0 rounded-b-md overflow-hidden" style={{ height }}>
+      <div className="border border-gray-300 border-t-0 rounded-b-md overflow-hidden relative" style={{ height }}>
+        {/* Indicateur de chargement */}
+        <div 
+          className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center transition-opacity duration-200"
+          style={{ opacity: iframeKey === Date.now() ? 1 : 0, pointerEvents: iframeKey === Date.now() ? 'auto' : 'none' }}
+        >
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+        </div>
+        
         <iframe
           key={iframeKey}
           srcDoc={getIframeContent()}
@@ -189,7 +214,7 @@ export default function CodePreviewSandbox({ code, language = 'jsx', height = '3
       </div>
       
       {error && (
-        <div className="mt-2 p-3 bg-red-100 text-red-800 rounded-md">
+        <div className="mt-2 p-3 bg-red-100 text-red-800 rounded-md animate-pulse">
           {error}
         </div>
       )}
