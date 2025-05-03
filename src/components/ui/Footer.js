@@ -66,3 +66,36 @@ export default function Footer() {
     </footer>
   );
 }
+"use client";
+
+import React from 'react';
+import Link from 'next/link';
+
+export default function Footer() {
+  return (
+    <footer className="bg-gray-800 text-white py-6">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-4 md:mb-0">
+            <p className="text-lg font-semibold">NextJS Mimo Clone</p>
+            <p className="text-gray-400">Apprenez Next.js de manière interactive</p>
+          </div>
+          <div className="flex space-x-4">
+            <Link href="/about" className="text-gray-300 hover:text-white">
+              À propos
+            </Link>
+            <Link href="/contact" className="text-gray-300 hover:text-white">
+              Contact
+            </Link>
+            <Link href="/privacy" className="text-gray-300 hover:text-white">
+              Confidentialité
+            </Link>
+          </div>
+        </div>
+        <div className="mt-4 text-center text-gray-400">
+          <p>© {new Date().getFullYear()} NextJS Mimo Clone. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
