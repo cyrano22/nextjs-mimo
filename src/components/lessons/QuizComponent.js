@@ -1,371 +1,226 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 export default function QuizComponent({ quiz, onComplete }) {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [score, setScore] = useState(0);
-  const [showResult, setShowResult] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [allAnswers, setAllAnswers] = useState([]);
-  const [timeRemaining, setTimeRemaining] = useState(null);
-  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [quizData, setQuizData] = useState(quiz);
 
-  // Initialiser le temps restant uniquement si le quiz a un temps limité
+  // Réinitialiser l'état quand le quiz change
   useEffect(() => {
-    if (quiz.timeLimit) {
-      setTimeRemaining(quiz.timeLimit);
-    }
+    setSelectedAnswer(null);
+    setIsSubmitted(false);
+    setIsCorrect(false);
+    setShowExplanation(false);
+    setQuizData(quiz);
   }, [quiz]);
 
-  // Timer pour le compte à rebours du quiz
-  useEffect(() => {
-    if (timeRemaining === null || timeRemaining <= 0 || showResult || quizCompleted) {
-      return;
+  const handleAnswerSelect = (index) => {
+    if (!isSubmitted) {
+      setSelectedAnswer(index);
     }
+  };
 
-    const timer = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          if (!quizCompleted) {
-            handleQuizComplete();
-          }
-          return 0;
-        }
-        return prev - 1;
+  const handleSubmit = () => {
+    if (selectedAnswer === null) return;
+
+    setIsSubmitted(true);
+    const correct = selectedAnswer === quizData.correctAnswer;
+    setIsCorrect(correct);
+
+    // Afficher automatiquement l'explication après la soumission
+    setShowExplanation(true);
+
+    // Appeler le callback si fourni
+    if (onComplete) {
+      onComplete({
+        quizId: quizData.id,
+        correct,
+        selectedAnswer
       });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeRemaining, showResult, quizCompleted]);
-
-  const handleOptionSelect = (optionIndex) => {
-    setSelectedOption(optionIndex);
+    }
   };
 
   const handleNextQuestion = () => {
-    // Sauvegarder la réponse actuelle
-    const currentQuizQuestion = quiz.questions[currentQuestion];
-    const isAnswerCorrect = selectedOption === currentQuizQuestion.correctAnswer 
-      || (Array.isArray(currentQuizQuestion.correctAnswer) && currentQuizQuestion.correctAnswer.includes(selectedOption));
-    
-    if (isAnswerCorrect) {
-      setScore(score + 1);
-    }
+    if (quizData.nextQuestion) {
+      // Gérer la navigation vers la question suivante
+      setSelectedAnswer(null);
+      setIsSubmitted(false);
+      setIsCorrect(false);
+      setShowExplanation(false);
 
-    setAllAnswers([...allAnswers, {
-      question: currentQuizQuestion.question,
-      selectedOption,
-      correctOption: currentQuizQuestion.correctAnswer,
-      isCorrect: isAnswerCorrect
-    }]);
-
-    // Réinitialiser l'état
-    setSelectedOption(null);
-    setIsCorrect(false);
-    setShowResult(false);
-
-    // Passer à la question suivante ou terminer le quiz
-    if (currentQuestion < quiz.questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      handleQuizComplete();
+      // Simuler le changement de question (dans un cas réel, cela viendrait probablement d'un parent)
+      setQuizData(quizData.nextQuestion);
     }
   };
 
-  const handleCheckAnswer = () => {
-    if (selectedOption === null) return;
-
-    const currentQuizQuestion = quiz.questions[currentQuestion];
-    const correct = selectedOption === currentQuizQuestion.correctAnswer 
-      || (Array.isArray(currentQuizQuestion.correctAnswer) && currentQuizQuestion.correctAnswer.includes(selectedOption));
-    
-    setIsCorrect(correct);
-    setShowResult(true);
-  };
-
-  const handleQuizComplete = () => {
-    setQuizCompleted(true);
-    if (onComplete) {
-      onComplete({
-        score,
-        totalQuestions: quiz.questions.length,
-        answers: allAnswers,
-        timeSpent: quiz.timeLimit ? quiz.timeLimit - timeRemaining : null
-      });
+  const variantButton = {
+    hover: { scale: 1.02 },
+    tap: { scale: 0.98 },
+    correct: { 
+      backgroundColor: "#34D399",
+      color: "#FFFFFF",
+      boxShadow: "0 0 0 2px #34D399" 
+    },
+    incorrect: { 
+      backgroundColor: "#F87171",
+      color: "#FFFFFF",
+      boxShadow: "0 0 0 2px #F87171" 
     }
   };
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
-
-  // Si le quiz est terminé, afficher le résumé
-  if (quizCompleted) {
-    return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-center mb-6">Résultat du Quiz</h2>
-        
-        <div className="text-center mb-8">
-          <div className="inline-block p-4 rounded-full bg-indigo-100 mb-4">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-16 w-16 text-indigo-600" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
-              />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold">
-            Vous avez obtenu {score} sur {quiz.questions.length}
-          </h3>
-          <p className="text-gray-600 mt-1">
-            {score === quiz.questions.length 
-              ? 'Parfait ! Vous avez répondu correctement à toutes les questions.'
-              : score >= quiz.questions.length / 2 
-                ? 'Bon travail ! Vous avez réussi le quiz.'
-                : 'Continuez à pratiquer pour vous améliorer.'}
-          </p>
-          {timeRemaining !== null && (
-            <p className="text-gray-500 mt-2">
-              Temps utilisé: {formatTime(quiz.timeLimit - timeRemaining)}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-6">
-          <h3 className="text-lg font-medium">Détails des réponses:</h3>
-          {allAnswers.map((answer, index) => (
-            <div 
-              key={index} 
-              className={`p-4 rounded-lg ${
-                answer.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
-              }`}
-            >
-              <p className="font-medium">{index + 1}. {answer.question}</p>
-              <div className="mt-2 flex items-start">
-                <div className={`mt-1 flex-shrink-0 ${
-                  answer.isCorrect ? 'text-green-500' : 'text-red-500'
-                }`}>
-                  {answer.isCorrect ? (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-gray-600">
-                    Votre réponse: {
-                      quiz.questions[index].options[answer.selectedOption]
-                    }
-                  </p>
-                  {!answer.isCorrect && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      Réponse correcte: {
-                        Array.isArray(answer.correctOption)
-                          ? answer.correctOption.map(opt => quiz.questions[index].options[opt]).join(', ')
-                          : quiz.questions[index].options[answer.correctOption]
-                      }
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 flex justify-center">
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-          >
-            Réessayer
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Afficher le quiz en cours
-  const currentQuizQuestion = quiz.questions[currentQuestion];
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">{quiz.title || 'Quiz'}</h2>
-        <div className="flex items-center">
-          <span className="text-sm font-medium text-gray-500 mr-4">
-            Question {currentQuestion + 1}/{quiz.questions.length}
-          </span>
-          {timeRemaining !== null && (
-            <div className="flex items-center text-sm font-medium">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5 text-gray-600 mr-1" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
-                />
-              </svg>
-              <span className={`${timeRemaining < 30 ? 'text-red-600' : 'text-gray-700'}`}>
-                {formatTime(timeRemaining)}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white rounded-lg shadow-md overflow-hidden"
+    >
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">
+          {quizData.question}
+        </h3>
 
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4">{currentQuizQuestion.question}</h3>
-
-        <div className="space-y-3">
-          {currentQuizQuestion.options.map((option, index) => (
-            <motion.div
+        <div className="space-y-3 mb-6">
+          {quizData.options.map((option, index) => (
+            <motion.button
               key={index}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              variants={variantButton}
+              initial={false}
+              whileHover={!isSubmitted ? "hover" : {}}
+              whileTap={!isSubmitted ? "tap" : {}}
+              animate={
+                isSubmitted 
+                  ? index === quizData.correctAnswer 
+                    ? "correct" 
+                    : selectedAnswer === index 
+                      ? "incorrect" 
+                      : {} 
+                  : {}
+              }
+              onClick={() => handleAnswerSelect(index)}
+              className={`w-full py-3 px-4 text-left rounded-md transition-all ${
+                !isSubmitted 
+                  ? selectedAnswer === index
+                    ? "bg-indigo-100 border-2 border-indigo-500"
+                    : "bg-gray-50 hover:bg-gray-100 border-2 border-transparent"
+                  : index === quizData.correctAnswer
+                    ? "bg-green-100 border-2 border-green-500"
+                    : selectedAnswer === index
+                      ? "bg-red-100 border-2 border-red-500"
+                      : "bg-gray-50 border-2 border-transparent opacity-70"
+              }`}
+              disabled={isSubmitted}
             >
-              <button
-                className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${
-                  selectedOption === index
-                    ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-gray-300 hover:border-indigo-300 hover:bg-gray-50'
-                } ${
-                  showResult 
-                    ? index === currentQuizQuestion.correctAnswer 
-                      ? 'border-green-500 bg-green-50'
-                      : selectedOption === index 
-                        ? 'border-red-500 bg-red-50'
-                        : ''
-                    : ''
-                }`}
-                onClick={() => !showResult && handleOptionSelect(index)}
-                disabled={showResult}
-              >
-                <div className="flex items-start">
-                  <div className={`flex-shrink-0 h-5 w-5 mt-0.5 rounded-full border ${
-                    selectedOption === index
-                      ? 'border-indigo-500 bg-indigo-500'
-                      : 'border-gray-300'
-                  } ${
-                    showResult 
-                      ? index === currentQuizQuestion.correctAnswer
-                        ? 'border-green-500 bg-green-500'
-                        : selectedOption === index
-                          ? 'border-red-500 bg-red-500'
-                          : ''
-                      : ''
-                  }`}>
-                    {(selectedOption === index || (showResult && index === currentQuizQuestion.correctAnswer)) && (
-                      <svg className="text-white h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path 
-                          fillRule="evenodd" 
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                          clipRule="evenodd" 
-                        />
+              <div className="flex items-center">
+                <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mr-3 ${
+                  !isSubmitted 
+                    ? selectedAnswer === index
+                      ? "border-indigo-500 bg-indigo-500 text-white"
+                      : "border-gray-400"
+                    : index === quizData.correctAnswer
+                      ? "border-green-500 bg-green-500 text-white"
+                      : selectedAnswer === index
+                        ? "border-red-500 bg-red-500 text-white"
+                        : "border-gray-400"
+                }`}>
+                  <span className="text-xs font-bold">
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                </div>
+                <span className="font-medium">{option}</span>
+
+                {isSubmitted && (
+                  <>
+                    {index === quizData.correctAnswer && (
+                      <svg className="ml-auto h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label className="font-medium text-gray-700 cursor-pointer">
-                      {option}
-                    </label>
-                  </div>
-                </div>
-              </button>
-            </motion.div>
+
+                    {selectedAnswer === index && index !== quizData.correctAnswer && (
+                      <svg className="ml-auto h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    )}
+                  </>
+                )}
+              </div>
+            </motion.button>
           ))}
         </div>
-      </div>
 
-      {showResult && (
-        <div className={`p-4 rounded-lg mb-6 ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
-          <div className="flex">
-            <div className={`flex-shrink-0 ${isCorrect ? 'text-green-500' : 'text-red-500'}`}>
-              {isCorrect ? (
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : (
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              )}
-            </div>
-            <div className="ml-3">
-              <p className={`text-sm font-medium ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                {isCorrect ? 'Correct !' : 'Incorrect !'}
-              </p>
-              <p className="text-sm mt-1">
-                {isCorrect
-                  ? currentQuizQuestion.explanation || 'Bonne réponse !'
-                  : currentQuizQuestion.explanation || `La bonne réponse est: ${currentQuizQuestion.options[currentQuizQuestion.correctAnswer]}`
-                }
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+        {isSubmitted && showExplanation && quizData.explanation && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className={`mb-4 p-4 rounded-md ${
+              isCorrect ? 'bg-green-50' : 'bg-blue-50'
+            }`}
+          >
+            <h4 className={`font-semibold mb-2 ${
+              isCorrect ? 'text-green-800' : 'text-blue-800'
+            }`}>
+              {isCorrect ? '✓ Correct!' : 'Explication:'}
+            </h4>
+            <p className={isCorrect ? 'text-green-700' : 'text-blue-700'}>
+              {quizData.explanation}
+            </p>
+          </motion.div>
+        )}
 
-      <div className="flex justify-between">
-        <div>
-          {currentQuestion > 0 && !showResult && (
+        <div className="flex justify-between">
+          {!isSubmitted ? (
             <button
-              onClick={() => setCurrentQuestion(currentQuestion - 1)}
-              className="px-4 py-2 text-indigo-600 bg-white border border-indigo-600 rounded-md hover:bg-indigo-50 transition-colors"
-            >
-              Question précédente
-            </button>
-          )}
-        </div>
-        
-        <div>
-          {!showResult ? (
-            <button
-              onClick={handleCheckAnswer}
-              disabled={selectedOption === null}
-              className={`px-4 py-2 rounded-md transition-colors ${
-                selectedOption === null
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
+              onClick={handleSubmit}
+              disabled={selectedAnswer === null}
+              className={`px-6 py-2 rounded-md text-white transition-colors ${
+                selectedAnswer === null 
+                  ? 'bg-indigo-300 cursor-not-allowed' 
+                  : 'bg-indigo-600 hover:bg-indigo-700'
               }`}
             >
-              Vérifier réponse
+              Valider
             </button>
           ) : (
-            <button
-              onClick={handleNextQuestion}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-            >
-              {currentQuestion < quiz.questions.length - 1 ? 'Question suivante' : 'Terminer le quiz'}
-            </button>
+            <div className="flex w-full justify-between">
+              <button
+                onClick={() => setShowExplanation(!showExplanation)}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-gray-800 transition-colors"
+              >
+                {showExplanation ? "Masquer l'explication" : "Voir l'explication"}
+              </button>
+
+              {quizData.nextQuestion && (
+                <button
+                  onClick={handleNextQuestion}
+                  className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-white transition-colors"
+                >
+                  Question suivante
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>
-    </div>
+
+      {quizData.difficulty && (
+        <div className="bg-gray-50 px-6 py-3 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            Difficulté: <span className="font-medium">{quizData.difficulty}</span>
+          </div>
+
+          {quizData.points && (
+            <div className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+              +{quizData.points} XP
+            </div>
+          )}
+        </div>
+      )}
+    </motion.div>
   );
 }

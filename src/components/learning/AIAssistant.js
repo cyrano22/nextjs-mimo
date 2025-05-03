@@ -1,335 +1,236 @@
-
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AIAssistant() {
+  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [conversation, setConversation] = useState([]);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const endOfMessagesRef = useRef(null);
-  const textareaRef = useRef(null);
-
-  // Scroll automatique vers le bas de la conversation
-  useEffect(() => {
-    if (endOfMessagesRef.current) {
-      endOfMessagesRef.current.scrollIntoView({ behavior: 'smooth' });
+  const [conversation, setConversation] = useState([
+    {
+      role: 'assistant',
+      content: "Bonjour ! Je suis votre assistant d'apprentissage IA. Comment puis-je vous aider aujourd'hui avec Next.js ou React ?"
     }
-  }, [conversation]);
+  ]);
 
-  // Ajuster automatiquement la hauteur du textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
-    }
-  }, [query]);
+  const toggleAssistant = () => {
+    setIsOpen(!isOpen);
+  };
 
-  const handleInputChange = (e) => {
+  const handleQueryChange = (e) => {
     setQuery(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!query.trim()) return;
-    
-    // Ajouter la question de l'utilisateur à la conversation
-    const userMessage = { role: 'user', content: query };
-    setConversation(prev => [...prev, userMessage]);
-    
-    // Réinitialiser l'input et montrer l'indicateur de chargement
-    setQuery('');
-    setIsLoading(true);
-    
-    try {
-      // Appel à l'API d'IA (simulé ici, dans une vraie application ce serait un appel à une API réelle)
-      const response = await getAIResponse(query);
-      
-      // Ajouter la réponse de l'IA à la conversation
-      const assistantMessage = { role: 'assistant', content: response };
-      setConversation(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error("Erreur lors de la communication avec l'IA:", error);
-      
-      // Ajouter un message d'erreur à la conversation
-      const errorMessage = { 
-        role: 'assistant', 
-        content: "Désolé, j'ai rencontré une erreur lors du traitement de votre demande. Veuillez réessayer." 
-      };
-      setConversation(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
     }
   };
 
-  const getAIResponse = async (userQuery) => {
-    // Dans une application réelle, cette fonction ferait un appel à une API 
-    // comme OpenAI, Hugging Face, ou votre propre modèle
-    
-    // Simulation de l'appel API avec un délai
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+  const handleSubmit = async () => {
+    if (!query.trim()) return;
+
+    // Ajouter la question de l'utilisateur à la conversation
+    const userMessage = { role: 'user', content: query };
+    setConversation([...conversation, userMessage]);
+    setIsLoading(true);
+    setQuery('');
+
     try {
-      // Tenter d'appeler l'API AI Assistant
+      // Appeler l'API pour obtenir la réponse de l'IA
       const response = await fetch('/api/ai-assistant/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query: userQuery }),
+        body: JSON.stringify({
+          query: query,
+          history: conversation.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          }))
+        }),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Erreur lors de la communication avec l'API');
+        throw new Error("Erreur lors de la communication avec l'API");
       }
-      
+
       const data = await response.json();
-      return data.response;
+
+      // Ajouter la réponse de l'IA à la conversation
+      const assistantMessage = { role: 'assistant', content: data.response };
+      setConversation([...conversation, userMessage, assistantMessage]);
     } catch (error) {
-      console.error("Erreur API:", error);
-      
-      // Réponses de secours en cas d'échec de l'API
-      const fallbackResponses = {
-        'code': "Voici comment vous pourriez structurer ce code:\n```javascript\nfunction example() {\n  // Votre logique ici\n  return result;\n}\n```\nN'hésitez pas à me demander des clarifications!",
-        'error': "Cette erreur est généralement causée par un problème de syntaxe. Vérifiez les accolades et les parenthèses manquantes dans votre code.",
-        'nextjs': "Dans Next.js, vous pouvez récupérer des données de plusieurs façons:\n- getStaticProps pour la génération statique\n- getServerSideProps pour le rendu côté serveur\n- useEffect avec fetch pour le chargement côté client",
-        'react': "En React, les composants peuvent être fonctionnels ou basés sur des classes. Les hooks comme useState et useEffect sont utilisés pour gérer l'état et les effets dans les composants fonctionnels.",
-        'api': "Pour créer une API dans Next.js, vous pouvez créer des fichiers dans le dossier pages/api/. Chaque fichier devient automatiquement un endpoint API.",
-        'css': "Pour styler vos composants Next.js, vous pouvez utiliser CSS Modules, Styled Components, Tailwind CSS, ou CSS-in-JS.",
-        'deployment': "Next.js peut être déployé sur diverses plateformes comme Vercel, Netlify, ou hébergé sur votre propre serveur."
+      console.error('Erreur:', error);
+      // Ajouter un message d'erreur à la conversation
+      const errorMessage = {
+        role: 'assistant',
+        content: "Désolé, je n'ai pas pu traiter votre demande. Veuillez réessayer."
       };
-      
-      // Déterminer quelle réponse de secours utiliser en fonction des mots-clés dans la requête
-      const queryLower = userQuery.toLowerCase();
-      for (const [keyword, response] of Object.entries(fallbackResponses)) {
-        if (queryLower.includes(keyword)) {
-          return response;
-        }
-      }
-      
-      // Réponse par défaut si aucun mot-clé ne correspond
-      return "Je suis l'assistant d'apprentissage Next.js. Je peux vous aider avec des questions sur Next.js, React, JavaScript et le développement web en général. N'hésitez pas à me poser une question spécifique.";
+      setConversation([...conversation, userMessage, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const toggleExpansion = () => {
-    setIsExpanded(!isExpanded);
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: 20, transition: { duration: 0.2 } }
   };
 
-  const clearConversation = () => {
-    setConversation([]);
+  const buttonVariants = {
+    hover: { scale: 1.05 },
+    tap: { scale: 0.95 }
   };
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ease-in-out ${
-      isExpanded ? 'w-96 h-[500px]' : 'w-16 h-16'
-    }`}>
-      {/* Bouton d'IA flottant (visible quand minimisé) */}
-      {!isExpanded && (
-        <button
-          onClick={toggleExpansion}
-          className="w-16 h-16 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg hover:bg-indigo-700 transition-colors"
-          aria-label="Ouvrir l'assistant IA"
+    <>
+      {/* Bouton flottant pour ouvrir l'assistant */}
+      <motion.button
+        className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center z-50"
+        onClick={toggleAssistant}
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
+        aria-label="Ouvrir l'assistant IA"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="h-8 w-8" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+          />
+        </svg>
+      </motion.button>
+
+      {/* Fenêtre de l'assistant */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed bottom-24 right-6 w-80 sm:w-96 bg-white rounded-lg shadow-xl z-50 overflow-hidden flex flex-col"
+            style={{ maxHeight: 'calc(100vh - 150px)' }}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-            />
-          </svg>
-        </button>
-      )}
-
-      {/* Interface complète (visible quand développé) */}
-      {isExpanded && (
-        <div className="bg-white rounded-lg shadow-xl flex flex-col h-full overflow-hidden border border-gray-200">
-          {/* En-tête */}
-          <div className="bg-indigo-600 px-4 py-3 text-white flex justify-between items-center">
-            <div className="flex items-center">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-6 w-6 mr-2" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-                />
-              </svg>
-              <h3 className="font-medium">Assistant Next.js</h3>
-            </div>
-            
-            <div className="flex">
+            {/* En-tête */}
+            <div className="bg-indigo-600 text-white p-4 flex justify-between items-center">
+              <h3 className="font-medium">Assistant d'apprentissage IA</h3>
               <button
-                onClick={clearConversation}
-                className="text-indigo-100 hover:text-white mr-3"
-                aria-label="Effacer la conversation"
+                onClick={toggleAssistant}
+                className="text-white hover:text-indigo-200 transition-colors"
+                aria-label="Fermer l'assistant"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-5 w-5" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
-                  />
-                </svg>
-              </button>
-              
-              <button
-                onClick={toggleExpansion}
-                className="text-indigo-100 hover:text-white"
-                aria-label="Fermer l'assistant IA"
-              >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-5 w-5" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M6 18L18 6M6 6l12 12" 
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Corps de la conversation */}
-          <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-            {conversation.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center text-gray-500 p-4">
-                <svg 
+                <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-12 w-12 text-gray-300 mb-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                  />
-                </svg>
-                <p className="mb-2 font-medium">Assistant d'apprentissage Next.js</p>
-                <p className="text-sm">
-                  Posez-moi des questions sur Next.js, React, ou vos problèmes de code. Je suis là pour vous aider dans votre parcours d'apprentissage!
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {conversation.map((message, index) => (
-                  <div 
-                    key={index} 
-                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div 
-                      className={`max-w-[85%] rounded-lg p-3 ${
-                        message.role === 'user' 
-                          ? 'bg-indigo-600 text-white rounded-br-none'
-                          : 'bg-white border border-gray-200 rounded-bl-none'
-                      }`}
-                    >
-                      <p className={`text-sm whitespace-pre-wrap ${
-                        message.role === 'user' ? 'text-white' : 'text-gray-800'
-                      }`}>
-                        {message.content}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-white border border-gray-200 rounded-lg rounded-bl-none p-3 max-w-[85%]">
-                      <div className="flex space-x-2">
-                        <div className="h-2 w-2 bg-indigo-600 rounded-full animate-bounce"></div>
-                        <div className="h-2 w-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        <div className="h-2 w-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                <div ref={endOfMessagesRef} />
-              </div>
-            )}
-          </div>
-
-          {/* Zone de saisie */}
-          <form onSubmit={handleSubmit} className="p-3 border-t border-gray-200 bg-white">
-            <div className="relative">
-              <textarea
-                ref={textareaRef}
-                value={query}
-                onChange={handleInputChange}
-                placeholder="Posez votre question..."
-                className="w-full border rounded-lg pl-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none overflow-auto"
-                rows="1"
-                style={{ maxHeight: '150px' }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-              />
-              <button
-                type="submit"
-                disabled={!query.trim() || isLoading}
-                className={`absolute right-2 bottom-2 rounded-full p-1 ${
-                  !query.trim() || isLoading
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-indigo-600 hover:text-indigo-800'
-                }`}
-              >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-5 w-5" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" 
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
                   />
                 </svg>
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1 text-center">
-              Appuyez sur Entrée pour envoyer, Maj+Entrée pour un saut de ligne
-            </p>
-          </form>
-        </div>
-      )}
-    </div>
+
+            {/* Corps de la conversation */}
+            <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+              {conversation.map((message, index) => (
+                <div
+                  key={index}
+                  className={`mb-4 ${
+                    message.role === 'user' ? 'text-right' : 'text-left'
+                  }`}
+                >
+                  <div
+                    className={`inline-block rounded-lg px-4 py-2 max-w-[80%] ${
+                      message.role === 'user'
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-white text-gray-800 border border-gray-200'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  </div>
+                </div>
+              ))}
+
+              {isLoading && (
+                <div className="text-left mb-4">
+                  <div className="inline-block rounded-lg px-4 py-2 bg-white text-gray-800 border border-gray-200">
+                    <div className="flex space-x-2">
+                      <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"></div>
+                      <div
+                        className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
+                        style={{ animationDelay: '0.2s' }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 rounded-full bg-gray-400 animate-bounce"
+                        style={{ animationDelay: '0.4s' }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Zone de saisie */}
+            <div className="border-t border-gray-200 p-4 bg-white">
+              <div className="flex">
+                <textarea
+                  className="flex-1 min-h-[40px] max-h-32 border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  placeholder="Posez votre question..."
+                  value={query}
+                  onChange={handleQueryChange}
+                  onKeyDown={handleKeyDown}
+                  rows={1}
+                  disabled={isLoading}
+                  style={{ overflow: 'auto' }}
+                ></textarea>
+                <button
+                  className={`px-4 rounded-r-md ${
+                    isLoading || !query.trim()
+                      ? 'bg-indigo-300 cursor-not-allowed'
+                      : 'bg-indigo-600 hover:bg-indigo-700'
+                  } text-white transition-colors`}
+                  onClick={handleSubmit}
+                  disabled={isLoading || !query.trim()}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-gray-500">
+                Astuce : appuyez sur Entrée pour envoyer.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
