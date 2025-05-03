@@ -70,20 +70,20 @@ export default function LessonsPage() {
           },
           {
             id: "3",
-            title: "Fonctionnalités Avancées",
-            description: "Explorez les API Routes, les middlewares, l'optimisation des images et l'internationalisation.",
-            level: "Avancé",
-            image: "/images/modules/nextjs-advanced.jpg",
+            title: "JavaScript Fondamentaux",
+            description: "Maîtrisez les bases de JavaScript, le langage essentiel pour le développement web moderne.",
+            level: "Débutant",
+            image: "/images/modules/javascript-basics.jpg",
             progressPercent: 0,
             lessons: 5,
             duration: "4 heures"
           },
           {
             id: "4",
-            title: "Déploiement et Performance",
-            description: "Apprenez à déployer et optimiser vos applications Next.js pour des performances maximales.",
-            level: "Expert",
-            image: "/images/modules/nextjs-deployment.jpg",
+            title: "React Fondamentaux",
+            description: "Apprenez React, la bibliothèque qui révolutionne la création d'interfaces utilisateur.",
+            level: "Intermédiaire",
+            image: "/images/modules/react-basics.jpg",
             progressPercent: 0,
             lessons: 4,
             duration: "3 heures"
@@ -106,11 +106,11 @@ export default function LessonsPage() {
       {/* Header */}
       <div className="mb-12 text-center max-w-3xl mx-auto">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
-          Parcours d'apprentissage Next.js
+          Parcours d'apprentissage
         </h1>
         <p className="text-xl text-gray-600 leading-relaxed">
-          Maîtrisez le développement web moderne avec notre curriculum structuré, 
-          allant des concepts fondamentaux aux techniques avancées.
+          Explorez nos parcours d'apprentissage structurés pour maîtriser le développement web, 
+          de JavaScript à React et Next.js.
         </p>
       </div>
 
@@ -215,7 +215,7 @@ export default function LessonsPage() {
                   href={`/lessons/module/${module.id}`}
                   className="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Voir le module
+                  Voir les leçons
                   <svg className="ml-2 -mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
