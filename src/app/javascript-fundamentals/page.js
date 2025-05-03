@@ -232,7 +232,7 @@ const PI = 3.14159;
         <li><code>Boolean</code> - Valeurs booléennes : <code>true</code>, <code>false</code></li>
         <li><code>null</code> - Valeur spéciale qui signifie "rien" ou "vide"</li>
         <li><code>undefined</code> - Valeur attribuée aux variables qui n'ont pas été initialisées</li>
-        <li><code>Object</code> - Collections de données : <code>{`{ name: "John", age: 30 }`}</code></li>
+        <li><code>Object</code> - Collections de données : <code>{"{\" name: \\\"John\\\", age: 30 \"}"}</code></li>
         <li><code>Array</code> - Listes ordonnées : <code>[1, 2, 3, 4]</code></li>
       </ul>
 
