@@ -1,3 +1,5 @@
+"use client"
+
 import Link from 'next/link';
 import CodeEditor from '../../../../../../components/editor/CodeEditor';
 import LessonProgress from '../../../../../../components/lessons/LessonProgress';

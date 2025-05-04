@@ -1,3 +1,5 @@
+"use client"
+
 
 export async function GET(request, { params }) {
   const moduleId = params.moduleId;
