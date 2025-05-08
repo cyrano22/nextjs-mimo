@@ -15,6 +15,7 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rimraf .next && rimraf node_modules/.cache",
+    "rebuild": "node scripts/rebuild-full.js",
     "prebuild": "node scripts/install-deps.js"
   },
   "dependencies": {

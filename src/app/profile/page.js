@@ -2,6 +2,9 @@
 
 import ProfileClient from "../../components/profile/ProfileClient";
 
+// Indiquer à Next.js de ne pas prévisualiser cette page pendant le build
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
   // Cette page est un composant serveur qui charge le composant client
   return (

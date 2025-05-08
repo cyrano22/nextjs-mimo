@@ -20,9 +20,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const loadUserFromLocalStorage = () => {
       try {
-        const storedUser = localStorage.getItem('nextmimo_user');
-        if (storedUser) {
-          setCurrentUser(JSON.parse(storedUser));
+        if (typeof window !== 'undefined') {
+          const storedUser = localStorage.getItem('nextmimo_user');
+          if (storedUser) {
+            setCurrentUser(JSON.parse(storedUser));
+          }
         }
       } catch (error) {
         console.error("Erreur lors du chargement de l'utilisateur:", error);
@@ -62,10 +64,13 @@ export function AuthProvider({ children }) {
           badges: 12,
           createdAt: new Date().toISOString()
         };
-        
-        setCurrentUser(adminUser);
+           setCurrentUser(adminUser);
+      if (typeof window !== 'undefined') {
         localStorage.setItem('nextmimo_user', JSON.stringify(adminUser));
-        return adminUser;
+        // Définir un cookie pour que le middleware puisse le détecter
+        document.cookie = `nextmimo_auth_token=${adminUser.id}; path=/; max-age=86400`;
+      }
+      return adminUser;
       } else if (email === 'user@example.com' && password === 'password123') {
         // Utilisateur standard
         const standardUser = {
@@ -81,10 +86,13 @@ export function AuthProvider({ children }) {
           badges: 4,
           createdAt: new Date().toISOString()
         };
-        
-        setCurrentUser(standardUser);
+           setCurrentUser(standardUser);
+      if (typeof window !== 'undefined') {
         localStorage.setItem('nextmimo_user', JSON.stringify(standardUser));
-        return standardUser;
+        // Définir un cookie pour que le middleware puisse le détecter
+        document.cookie = `nextmimo_auth_token=${standardUser.id}; path=/; max-age=86400`;
+      }
+      return standardUser;
       } else {
         throw new Error("Identifiants invalides");
       }
@@ -126,7 +134,11 @@ export function AuthProvider({ children }) {
       };
 
       setCurrentUser(newUser);
-      localStorage.setItem('nextmimo_user', JSON.stringify(newUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('nextmimo_user', JSON.stringify(newUser));
+        // Définir un cookie pour que le middleware puisse le détecter
+        document.cookie = `nextmimo_auth_token=${newUser.id}; path=/; max-age=86400`;
+      }
       return newUser;
     } catch (error) {
       setError(error.message);
@@ -139,14 +151,20 @@ export function AuthProvider({ children }) {
   // Fonction de déconnexion
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('nextmimo_user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('nextmimo_user');
+      // Supprimer également le cookie d'authentification
+      document.cookie = 'nextmimo_auth_token=; path=/; max-age=0';
+    }
   };
 
   // Fonction de mise à jour du profil utilisateur
   const updateProfile = (userData) => {
     const updatedUser = { ...currentUser, ...userData };
     setCurrentUser(updatedUser);
-    localStorage.setItem('nextmimo_user', JSON.stringify(updatedUser));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('nextmimo_user', JSON.stringify(updatedUser));
+    }
     return updatedUser;
   };
 
@@ -179,7 +197,9 @@ export function AuthProvider({ children }) {
     }
     
     setCurrentUser(updatedUser);
-    localStorage.setItem('nextmimo_user', JSON.stringify(updatedUser));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('nextmimo_user', JSON.stringify(updatedUser));
+    }
     return updatedUser;
   };
 

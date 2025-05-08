@@ -37,9 +37,26 @@ export default function LoginPage() {
         // Connexion
         await login(formData.email, formData.password);
         
-        // Redirection après connexion
-        const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/dashboard';
-        router.push(redirectPath);
+        // Récupérer l'URL de redirection depuis les paramètres d'URL ou les cookies
+        const params = new URLSearchParams(window.location.search);
+        const redirectParam = params.get('redirectTo');
+        
+        // Vérifier le cookie si pas de paramètre dans l'URL
+        let redirectPath = redirectParam;
+        if (!redirectPath && typeof document !== 'undefined') {
+          // Fonction pour extraire un cookie par nom
+          const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+          };
+          
+          redirectPath = getCookie('redirectAfterLogin');
+        }
+        
+        // Utiliser le dashboard comme valeur par défaut si aucune redirection n'est spécifiée
+        router.push(redirectPath || '/dashboard');
       } else {
         // Inscription
         await register(formData.email, formData.password, formData.name);

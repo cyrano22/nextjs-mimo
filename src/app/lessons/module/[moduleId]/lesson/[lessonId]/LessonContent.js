@@ -514,7 +514,7 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
                       className="mt-8 p-6 bg-green-50 border border-green-100 rounded-md text-center"
                     >
                       <h3 className="text-xl font-bold text-green-700">🎉 Félicitations !</h3>
-                        </Link>
+                      <div className="mt-4 flex justify-center space-x-4">
                         <Link href="/dashboard" className="btn-secondary">
                           Retour au tableau de bord
                         </Link>

@@ -15,9 +15,11 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
     if (!loading) {
       // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
       if (!currentUser) {
-        // Stocker la page actuelle pour rediriger après la connexion
-        sessionStorage.setItem('redirectAfterLogin', pathname);
-        router.push('/login');
+        // Stocker la page actuelle dans un cookie pour rediriger après la connexion
+        if (typeof document !== 'undefined') {
+          document.cookie = `redirectAfterLogin=${pathname}; path=/; max-age=600`;
+        }
+        router.push(`/login?redirectTo=${encodeURIComponent(pathname)}`);
       } 
       // Si la page est réservée aux administrateurs et que l'utilisateur n'est pas admin
       else if (adminOnly && !isAdmin()) {

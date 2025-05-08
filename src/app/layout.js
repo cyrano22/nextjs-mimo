@@ -6,6 +6,8 @@ import Navbar from '../components/ui/Navbar';
 import { useState, useEffect } from 'react';
 import SimpleAIAssistant from '@/components/learning/SimpleAIAssistant';
 import GlobalAIAssistant from '@/components/layouts/GlobalAIAssistant';
+import { AuthProvider } from '../contexts/AuthContext';
+import { GamificationProvider } from '../components/gamification/GamificationContext';
 
 export default function RootLayout({ children }) {
   const [theme, setTheme] = useState('light');
@@ -56,13 +58,17 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" />
       </head>
       <body className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-        <Navbar onThemeToggle={toggleTheme} currentTheme={theme} />
-        <main className="flex-grow pt-16 md:pt-20">
-          {children}
-        </main>
-        <Footer />
-        <SimpleAIAssistant />
-        <GlobalAIAssistant />
+        <AuthProvider>
+          <GamificationProvider>
+            <Navbar onThemeToggle={toggleTheme} currentTheme={theme} />
+            <main className="flex-grow pt-16 md:pt-20">
+              {children}
+            </main>
+            <Footer />
+            <SimpleAIAssistant />
+            <GlobalAIAssistant />
+          </GamificationProvider>
+        </AuthProvider>
       </body>
     </html>
   );

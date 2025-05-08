@@ -4,6 +4,9 @@ import { useState } from 'react';
 import PortfolioBuilder from '../../components/portfolio/PortfolioBuilder';
 import PortfolioPreview from '../../components/portfolio/PortfolioPreview';
 
+// Indiquer à Next.js de ne pas prévisualiser cette page pendant le build
+export const dynamic = 'force-dynamic';
+
 export default function PortfolioPage() {
   const [view, setView] = useState('builder');
   const [portfolioData, setPortfolioData] = useState({

@@ -1,22 +1,25 @@
 "use client";
 
-import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
+import { default as NextDynamic } from 'next/dynamic';
+
+// Indiquer à Next.js de ne pas prévisualiser cette page pendant le build
+export const dynamic = 'force-dynamic';
 
 // Importer dynamiquement les composants client pour éviter les erreurs de prérendu
-const DashboardClient = dynamic(() => import('../../components/dashboard/DashboardClient'), {
+const DashboardClient = NextDynamic(() => import('../../components/dashboard/DashboardClient'), {
   loading: () => <p>Chargement du tableau de bord...</p>
 });
 
-const CourseVerificationComponent = dynamic(() => import('../../components/dashboard/CourseVerificationComponent'), {
+const CourseVerificationComponent = NextDynamic(() => import('../../components/dashboard/CourseVerificationComponent'), {
   loading: () => <p>Chargement de la vérification des cours...</p>
 });
 
-const CourseStatistics = dynamic(() => import('../../components/dashboard/CourseStatistics'), {
+const CourseStatistics = NextDynamic(() => import('../../components/dashboard/CourseStatistics'), {
   loading: () => <p>Chargement des statistiques des cours...</p>
 });
 
-const AIAssistant = dynamic(() => import('../../components/learning/AIAssistant'), {
+const AIAssistant = NextDynamic(() => import('../../components/learning/AIAssistant'), {
   loading: () => <p>Chargement de l'assistant IA...</p>
 });
 

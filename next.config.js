@@ -19,7 +19,13 @@ const nextConfig = {
     optimizeCss: false,
     // Améliorer la compatibilité des modules vendeurs
     esmExternals: 'loose',
+    // Désactiver le prefetching qui peut interférer avec l'auth
+    prefetchCache: false,
   },
+
+  // Configuration pour définir quelles pages sont statiques et lesquelles sont dynamiques
+  // Pages qui nécessitent une authentification devraient être dynamiques
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   
   // Utiliser le mode de compilation standard au lieu de standalone
   // output: 'standalone', // Commenté pour débogage
@@ -32,7 +38,67 @@ const nextConfig = {
       'framer-motion': require.resolve('framer-motion'),
     };
     
+    // Rendre le polyfill localStorage/window disponible côté serveur 
+    if (isServer) {
+      // Mock global window et localStorage côté serveur
+      Object.defineProperty(global, 'window', {
+        value: {
+          localStorage: {
+            getItem: () => null,
+            setItem: () => null,
+            removeItem: () => null
+          },
+          matchMedia: () => ({
+            matches: false,
+            addEventListener: () => {},
+            removeEventListener: () => {}
+          }),
+          navigator: {
+            userAgent: 'node'
+          },
+          document: {
+            cookie: '',
+            querySelector: () => null,
+            querySelectorAll: () => [],
+            documentElement: { 
+              classList: { 
+                add: () => {},
+                remove: () => {}
+              }
+            },
+            createElement: () => ({
+              style: {}
+            })
+          }
+        },
+        writable: true
+      });
+    }
+    
     return config;
+  },
+
+  // Configuration des headers HTTP pour améliorer la sécurité
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+    ];
   },
 }
 
