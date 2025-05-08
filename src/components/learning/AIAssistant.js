@@ -1,18 +1,29 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function AIAssistant() {
+export default function AIAssistant({ lessonContext = {}, currentDifficulty = null }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [conversation, setConversation] = useState([
     {
       role: 'assistant',
-      content: "Bonjour ! Je suis votre assistant d'apprentissage IA. Comment puis-je vous aider aujourd'hui avec Next.js ou React ?"
+      content: "Bonjour ! Je suis votre assistant d'apprentissage IA. Comment puis-je vous aider dans cette leçon ?"
     }
   ]);
+  
+  const messagesEndRef = useRef(null);
+  
+  // Faire défiler automatiquement vers le bas lorsque de nouveaux messages sont ajoutés
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation]);
 
   const toggleAssistant = () => {
     setIsOpen(!isOpen);
@@ -29,24 +40,56 @@ export default function AIAssistant() {
     }
   };
 
+  // Liste des questions fréquentes selon le niveau de difficulté
+  const commonQuestions = {
+    débutant: [
+      "Comment fonctionne le routage dans Next.js ?",
+      "Quelle est la différence entre SSR et SSG ?",
+      "Comment installer et configurer Next.js ?"
+    ],
+    intermédiaire: [
+      "Comment implémenter l'authentification ?",
+      "Comment gérer les API routes efficacement ?",
+      "Comment optimiser les performances ?"
+    ],
+    avancé: [
+      "Comment configurer le middleware ?",
+      "Comment implémenter le streaming SSR ?",
+      "Comment tester une application Next.js ?"
+    ]
+  };
+
+  // Sélectionner les questions correspondant au niveau actuel
+  const getDifficultyQuestions = () => {
+    if (!currentDifficulty) return commonQuestions.débutant;
+    return commonQuestions[currentDifficulty.toLowerCase()] || commonQuestions.débutant;
+  };
+
   const handleSubmit = async () => {
     if (!query.trim()) return;
 
     // Ajouter la question de l'utilisateur à la conversation
     const userMessage = { role: 'user', content: query };
-    setConversation([...conversation, userMessage]);
+    setConversation(prev => [...prev, userMessage]);
     setIsLoading(true);
     setQuery('');
 
     try {
-      // Appeler l'API pour obtenir la réponse de l'IA
-      const response = await fetch('/api/ai-assistant/analyze', {
+      // Appeler l'API avec tout le contexte nécessaire
+      const response = await fetch('/api/ai-assistant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           query: query,
+          lessonContext: {
+            id: lessonContext.id || null,
+            title: lessonContext.title || null,
+            moduleId: lessonContext.moduleId || null,
+            difficulty: currentDifficulty || "débutant",
+            concepts: lessonContext.concepts || []
+          },
           history: conversation.map(msg => ({
             role: msg.role,
             content: msg.content
@@ -62,7 +105,7 @@ export default function AIAssistant() {
 
       // Ajouter la réponse de l'IA à la conversation
       const assistantMessage = { role: 'assistant', content: data.response };
-      setConversation([...conversation, userMessage, assistantMessage]);
+      setConversation(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Erreur:', error);
       // Ajouter un message d'erreur à la conversation
@@ -70,7 +113,7 @@ export default function AIAssistant() {
         role: 'assistant',
         content: "Désolé, je n'ai pas pu traiter votre demande. Veuillez réessayer."
       };
-      setConversation([...conversation, userMessage, errorMessage]);
+      setConversation(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -87,20 +130,26 @@ export default function AIAssistant() {
     tap: { scale: 0.95 }
   };
 
+  // Fonction pour sélectionner une question prédéfinie
+  const selectPresetQuestion = (question) => {
+    setQuery(question);
+  };
+
   return (
     <>
       {/* Bouton flottant pour ouvrir l'assistant */}
       <motion.button
-        className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center z-50"
+        className="fixed bottom-6 right-6 w-16 h-16 bg-indigo-600 text-white rounded-full shadow-xl flex items-center justify-center z-[9999]"
         onClick={toggleAssistant}
         variants={buttonVariants}
         whileHover="hover"
         whileTap="tap"
         aria-label="Ouvrir l'assistant IA"
+        style={{ boxShadow: '0 0 15px rgba(79, 70, 229, 0.6)' }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
+          className="h-8 w-8"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -109,7 +158,7 @@ export default function AIAssistant() {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+            d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.165 3.318H4.208c-1.15 0-2.058-1.086-1.466-2.18l1.235-2.273L5 14.5"
           />
         </svg>
       </motion.button>
@@ -186,7 +235,26 @@ export default function AIAssistant() {
                   </div>
                 </div>
               )}
+              <div ref={messagesEndRef} />
             </div>
+            
+            {/* Questions fréquentes */}
+            {conversation.length < 3 && (
+              <div className="px-4 py-2 bg-gray-50 border-t border-gray-200">
+                <p className="text-xs font-medium text-gray-500 mb-2">Questions fréquentes :</p>
+                <div className="flex flex-wrap gap-2">
+                  {getDifficultyQuestions().map((question, idx) => (
+                    <button 
+                      key={idx}
+                      onClick={() => selectPresetQuestion(question)}
+                      className="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full transition-colors"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Zone de saisie */}
             <div className="border-t border-gray-200 p-4 bg-white">

@@ -7,6 +7,7 @@ import QuizComponent from "../lessons/QuizComponent";
 import ExerciseComponent from "../lessons/ExerciseComponent";
 import ExerciseWithPreview from "../editor/ExerciseWithPreview";
 import Tabs from "../ui/Tabs";
+import AIAssistant from "./AIAssistant";
 
 /**
  * Composant pédagogique complet qui structure l'apprentissage d'un concept
@@ -22,6 +23,9 @@ export default function LearningSection({
   codeExercise,
   keyPoints,
   onComplete,
+  moduleId,
+  lessonId,
+  difficulty = "débutant"
 }) {
   const [progress, setProgress] = useState("theory");
   const [completed, setCompleted] = useState({
@@ -173,9 +177,13 @@ export default function LearningSection({
             Points clés à retenir
           </h3>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
-            {keyPoints.map((point, index) => (
-              <li key={index}>{point}</li>
-            ))}
+            {keyPoints && keyPoints.length > 0 ? (
+              keyPoints.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))
+            ) : (
+              <li>Aucun point clé disponible pour cette leçon.</li>
+            )}
           </ul>
           <div className="bg-indigo-50 border border-indigo-100 rounded-md p-4 mt-6">
             <p className="text-indigo-700">
@@ -206,18 +214,31 @@ export default function LearningSection({
   };
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="bg-white rounded-lg shadow-md p-6 mb-8"
-    >
-      <motion.div variants={itemVariants} className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-        <p className="mt-1 text-gray-600">{description}</p>
-      </motion.div>
+    <>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="bg-white rounded-lg shadow-md p-6 mb-8"
+      >
+        <motion.div variants={itemVariants} className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+          <p className="mt-1 text-gray-600">{description}</p>
+        </motion.div>
 
-      <Tabs tabs={tabs} defaultTab={getActiveTabIndex()} className="mt-6" />
-    </motion.div>
+        <Tabs tabs={tabs} defaultTab={getActiveTabIndex()} className="mt-6" />
+      </motion.div>
+      
+      {/* Assistant IA intégré à chaque leçon */}
+      <AIAssistant 
+        lessonContext={{
+          id: lessonId,
+          title: title,
+          moduleId: moduleId,
+          concepts: keyPoints
+        }}
+        currentDifficulty={difficulty}
+      />
+    </>
   );
 }

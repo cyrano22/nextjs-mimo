@@ -68,6 +68,7 @@ export default function LessonPage({ params }: { params: Params }) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [completionTime, setCompletionTime] = useState<number>(0);
+  const [lessonTitles, setLessonTitles] = useState<{[key: string]: string}>({});
 
   // Commencer à chronométrer le temps passé sur la leçon
   useEffect(() => {
@@ -94,6 +95,12 @@ export default function LessonPage({ params }: { params: Params }) {
         if (response.ok) {
           console.log(`Leçon chargée avec succès: ${data.title}`);
           setLesson(data);
+          
+          // Si la leçon a des prérequis qui sont des identifiants de leçons (1-1, 1-2, etc.)
+          // récupérer les titres de ces leçons pour un meilleur affichage
+          if (data.prerequisites && data.prerequisites.some(prereq => /^\d+-\d+$/.test(prereq))) {
+            fetchLessonTitles();
+          }
         } else {
           console.error(`Erreur API: ${data.error || 'Leçon non trouvée'}`);
           console.log(`Détails: ${JSON.stringify(data, null, 2)}`);
@@ -109,6 +116,65 @@ export default function LessonPage({ params }: { params: Params }) {
 
     fetchData();
   }, [moduleId, lessonId]);
+
+  // Fonction pour récupérer les titres des leçons prérequises
+  const fetchLessonTitles = async () => {
+    try {
+      // Récupérer la liste des modules (pour avoir tous les titres de leçons)
+      console.log("Tentative de récupération des titres de leçons pour les prérequis");
+      const response = await fetch('/api/modules');
+      const data = await response.json();
+      
+      // Afficher la structure exacte de la réponse pour débogage
+      console.log("Structure de la réponse API:", JSON.stringify(data).substring(0, 500) + "...");
+      
+      // Déterminer si la structure a 'modules' ou si les modules sont directement dans data
+      const modules = data.modules || data;
+      
+      if (response.ok && Array.isArray(modules)) {
+        console.log("Données des modules récupérées avec succès:", modules.length, "modules");
+        
+        // Construire un dictionnaire d'identifiants de leçons -> titres
+        const titles: {[key: string]: string} = {};
+        
+        // Parcourir tous les modules
+        for (const module of modules) {
+          if (module.lessons && Array.isArray(module.lessons)) {
+            console.log(`Module ${module.id} contient ${module.lessons.length} leçons`);
+            // Pour chaque leçon, ajouter son titre au dictionnaire
+            module.lessons.forEach((lesson: any) => {
+              if (lesson.id && lesson.title) {
+                titles[lesson.id] = lesson.title;
+                console.log(`Ajout du titre pour la leçon ${lesson.id}: "${lesson.title}"`);
+              }
+            });
+          }
+        }
+        
+        console.log("Dictionnaire des titres de leçons créé:", titles);
+        setLessonTitles(titles);
+      } else {
+        console.error("Réponse API incorrecte pour /api/modules:", data);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des titres de leçons:', error);
+    }
+  };
+
+  // Fonction pour formater un prérequis (convertir un ID en titre si possible)
+  const formatPrerequisite = (prereq: string) => {
+    console.log(`Formatage du prérequis: "${prereq}"`, { 
+      "Est au format module-leçon": /^\d+-\d+$/.test(prereq),
+      "Titre disponible": lessonTitles[prereq] ? "Oui" : "Non" 
+    });
+    
+    // Vérifier si le prérequis est au format "module-leçon" (ex: 1-1)
+    if (/^\d+-\d+$/.test(prereq) && lessonTitles[prereq]) {
+      return `${lessonTitles[prereq]} (${prereq})`;
+    }
+    
+    return prereq;
+  };
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -210,14 +276,14 @@ export default function LessonPage({ params }: { params: Params }) {
           <div className="flex items-center">
             <div className="mr-6 flex items-center text-gray-500">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>{lesson.duration || 15} minutes</span>
             </div>
             
             <div className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-md flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Temps écoulé: {formatTime(completionTime)}</span>
             </div>
@@ -243,9 +309,14 @@ export default function LessonPage({ params }: { params: Params }) {
           >
             <div className="font-medium mb-1">Prérequis :</div>
             <ul className="list-disc list-inside">
-              {lesson.prerequisites.map((prereq, index) => (
-                <li key={index}>{prereq}</li>
-              ))}
+              {lesson.prerequisites.map((prereq, index) => {
+                console.log(`Affichage du prérequis ${index}:`, prereq);
+                const formattedPrereq = formatPrerequisite(prereq);
+                console.log(`Prérequis formaté:`, formattedPrereq);
+                return (
+                  <li key={index}>{formattedPrereq}</li>
+                );
+              })}
             </ul>
           </motion.div>
         )}

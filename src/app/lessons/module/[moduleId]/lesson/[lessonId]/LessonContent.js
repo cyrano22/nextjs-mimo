@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import CodeEditor from '@/components/editor/CodeEditor';
@@ -19,6 +19,20 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
     quiz: false,
     project: false
   });
+  
+  // Corriger des valeurs hasExample, hasExercise, hasQuiz et hasProject manquantes
+  const normalizedLesson = useMemo(() => {
+    if (!lesson) return null;
+    
+    return {
+      ...lesson,
+      // Définir ces propriétés si elles n'existent pas déjà
+      hasExample: lesson.hasExample !== undefined ? lesson.hasExample : !!lesson.example,
+      hasExercise: lesson.hasExercise !== undefined ? lesson.hasExercise : !!lesson.exercise, 
+      hasQuiz: lesson.hasQuiz !== undefined ? lesson.hasQuiz : !!lesson.quiz,
+      hasProject: lesson.hasProject !== undefined ? lesson.hasProject : !!lesson.project
+    };
+  }, [lesson]);
   
   // Mettre à jour la progression
   useEffect(() => {
@@ -41,13 +55,16 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
     exit: { opacity: 0, x: -20, transition: { duration: 0.2 } }
   };
   
+  // Si la leçon n'est pas disponible, ne rien afficher
+  if (!normalizedLesson) return null;
+  
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-3xl font-bold">{lesson?.title || "Titre de la leçon"}</h1>
-            <p className="text-gray-600 mt-2">{lesson?.description || "Description de la leçon"}</p>
+            <h1 className="text-3xl font-bold">{normalizedLesson?.title || "Titre de la leçon"}</h1>
+            <p className="text-gray-600 mt-2">{normalizedLesson?.description || "Description de la leçon"}</p>
           </div>
           
           <div className="flex space-x-2">
@@ -229,7 +246,7 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
                   exit="exit"
                   className="prose max-w-none"
                 >
-                  <div dangerouslySetInnerHTML={{ __html: lesson?.content || "<p>Contenu de la leçon...</p>" }} />
+                  <div dangerouslySetInnerHTML={{ __html: normalizedLesson?.content || "<p>Contenu de la leçon...</p>" }} />
                   
                   <div className="mt-8">
                     <button 
@@ -255,13 +272,13 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
                 >
                   <h2 className="text-xl font-semibold mb-4">Exemple</h2>
                   
-                  {lesson?.example ? (
+                  {normalizedLesson?.hasExample ? (
                     <div className="bg-gray-50 rounded-md p-6">
-                      <h3 className="text-lg font-medium mb-3">{lesson.example.title || "Exemple de code"}</h3>
+                      <h3 className="text-lg font-medium mb-3">{normalizedLesson.example.title || "Exemple de code"}</h3>
                       <div className="bg-gray-100 rounded-md p-4 mb-4 font-mono text-sm overflow-x-auto">
-                        <pre>{lesson.example.code || "// Exemple de code"}</pre>
+                        <pre>{normalizedLesson.example.code || "// Exemple de code"}</pre>
                       </div>
-                      <p className="text-gray-700">{lesson.example.explanation || "Explication de l'exemple"}</p>
+                      <p className="text-gray-700">{normalizedLesson.example.explanation || "Explication de l'exemple"}</p>
                       
                       <div className="mt-6 flex justify-between">
                         <button 
@@ -311,10 +328,10 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
                   <h2 className="text-xl font-semibold mb-4">Exercice pratique</h2>
                   <p className="text-gray-600 mb-6">Mettez en pratique ce que vous avez appris en complétant l'exercice suivant.</p>
                   
-                  {lesson?.exercise ? (
+                  {normalizedLesson?.hasExercise ? (
                     <div className="bg-gray-50 rounded-md p-6">
                       <ExerciseComponent 
-                        exercise={lesson.exercise} 
+                        exercise={normalizedLesson.exercise} 
                         onComplete={() => completeSection('exercise')}
                       />
                       
@@ -372,9 +389,9 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
                   <h2 className="text-xl font-semibold mb-4">Quiz de validation</h2>
                   <p className="text-gray-600 mb-6">Vérifiez votre compréhension en répondant aux questions suivantes.</p>
                   
-                  {lesson?.quiz ? (
+                  {normalizedLesson?.hasQuiz ? (
                     <div className="bg-gray-50 rounded-md p-6">
-                      <QuizComponent quiz={lesson.quiz} onComplete={() => completeSection('quiz')} />
+                      <QuizComponent quiz={normalizedLesson.quiz} onComplete={() => completeSection('quiz')} />
                       
                       <div className="mt-6 flex justify-between">
                         <button 
@@ -427,15 +444,15 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
                   animate="visible"
                   exit="exit"
                 >
-                  <h2 className="text-xl font-semibold mb-4">{lesson?.project?.title || "Projet final"}</h2>
-                  <p className="text-gray-600 mb-6">{lesson?.project?.description || "Appliquez tout ce que vous avez appris dans un projet pratique."}</p>
+                  <h2 className="text-xl font-semibold mb-4">{normalizedLesson?.project?.title || "Projet final"}</h2>
+                  <p className="text-gray-600 mb-6">{normalizedLesson?.project?.description || "Appliquez tout ce que vous avez appris dans un projet pratique."}</p>
                   
-                  {lesson?.project ? (
+                  {normalizedLesson?.hasProject ? (
                     <div className="bg-gray-50 rounded-md p-6">
                       <CodeEditor 
-                        initialCode={lesson.project.initialCode || "// Écrivez votre code ici"} 
-                        solution={lesson.project.solution || "// Solution"}
-                        language={lesson.project.language || "javascript"}
+                        initialCode={normalizedLesson.project.initialCode || "// Écrivez votre code ici"} 
+                        solution={normalizedLesson.project.solution || "// Solution"}
+                        language={normalizedLesson.project.language || "javascript"}
                         onCodeRun={() => completeSection('project')}
                       />
                       

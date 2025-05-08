@@ -4,6 +4,8 @@ import './globals.css';
 import Footer from '../components/ui/Footer';
 import Navbar from '../components/ui/Navbar';
 import { useState, useEffect } from 'react';
+import SimpleAIAssistant from '@/components/learning/SimpleAIAssistant';
+import GlobalAIAssistant from '@/components/layouts/GlobalAIAssistant';
 
 export default function RootLayout({ children }) {
   const [theme, setTheme] = useState('light');
@@ -59,6 +61,8 @@ export default function RootLayout({ children }) {
           {children}
         </main>
         <Footer />
+        <SimpleAIAssistant />
+        <GlobalAIAssistant />
       </body>
     </html>
   );
