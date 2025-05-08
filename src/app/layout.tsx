@@ -27,7 +27,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="fr" className="dark">
+    <html lang="fr">
       <body
         className={`${inter.variable} ${sourceCodePro.variable} antialiased`}
       >

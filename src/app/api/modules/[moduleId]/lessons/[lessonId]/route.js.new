@@ -1,0 +1,38 @@
+export async function GET(request, { params }) {
+  const { moduleId, lessonId } = params;
+  const key = `${moduleId}-${lessonId}`;
+  const lesson = LESSONS[key];
+
+  if (!lesson) {
+    return new Response(JSON.stringify({ error: 'Lesson not found' }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  return new Response(JSON.stringify(lesson), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+// Définition des leçons (exemple simplifié)
+const LESSONS = {
+  '1-1': {
+    title: 'Introduction au développement web moderne',
+    description: "Vue d'ensemble des technologies web actuelles",
+    difficulty: 'débutant',
+    duration: 30,
+    tags: ['HTML', 'CSS', 'JavaScript'],
+    prerequisites: [],
+    content: "Le développement web moderne repose sur trois piliers : HTML pour la structure, CSS pour le style et JavaScript pour l'interactivité."
+  },
+  '4-1': {
+    title: 'Introduction à React',
+    description: 'Découverte des concepts fondamentaux de React',
+    difficulty: 'intermédiaire',
+    duration: 45,
+    tags: ['React', 'JavaScript', 'Frontend'],
+    prerequisites: ['3-1'],
+    content: 'React est une bibliothèque JavaScript développée par Facebook pour créer des interfaces utilisateur réactives.'
+  }
+};

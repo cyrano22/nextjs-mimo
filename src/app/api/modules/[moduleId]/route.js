@@ -1,6 +1,3 @@
-"use client"
-
-
 export async function GET(request, { params }) {
   const moduleId = params.moduleId;
   
@@ -143,31 +140,30 @@ export async function GET(request, { params }) {
     },
     {
       id: "3",
-      title: "JavaScript Fondamentaux",
-      description: "Maîtrisez les bases de JavaScript, le langage essentiel pour le développement web moderne.",
-      level: "Débutant",
-      image: "/images/modules/javascript-basics.jpg",
+      title: "Fonctionnalités Avancées",
+      description: "Explorez les API Routes, les middlewares, l'optimisation des images et l'internationalisation.",
+      level: "Avancé",
+      image: "/images/modules/nextjs-advanced.jpg",
       progressPercent: 0,
       lessons: [
-        { id: "3-1", title: "Variables et Types", type: "theory", duration: "20 min", xpReward: 10, completed: false },
-        { id: "3-2", title: "Fonctions", type: "theory", duration: "25 min", xpReward: 15, completed: false },
-        { id: "3-3", title: "Objets et tableaux", type: "exercise", duration: "30 min", xpReward: 20, completed: false },
-        { id: "3-4", title: "Événements et DOM", type: "exercise", duration: "30 min", xpReward: 20, completed: false },
-        { id: "3-5", title: "Projet final", type: "project", duration: "45 min", xpReward: 25, completed: false }
+        { id: "3-1", title: "API Routes", type: "theory", duration: 20, xpReward: 15, completed: false },
+        { id: "3-2", title: "Middleware", type: "theory", duration: 25, xpReward: 20, completed: false },
+        { id: "3-3", title: "Optimisation des Images", type: "exercise", duration: 30, xpReward: 25, completed: false },
+        { id: "3-4", title: "Internationalisation", type: "project", duration: 40, xpReward: 30, completed: false }
       ]
     },
     {
       id: "4",
-      title: "React Fondamentaux",
-      description: "Apprenez React, la bibliothèque qui révolutionne la création d'interfaces utilisateur.",
-      level: "Intermédiaire",
-      image: "/images/modules/react-basics.jpg",
+      title: "Déploiement et Performance",
+      description: "Apprenez à déployer et optimiser vos applications Next.js pour des performances maximales.",
+      level: "Expert",
+      image: "/images/modules/nextjs-deployment.jpg",
       progressPercent: 0,
       lessons: [
-        { id: "4-1", title: "Components et Props", type: "theory", duration: "20 min", xpReward: 10, completed: false },
-        { id: "4-2", title: "State et Cycle de vie", type: "theory", duration: "25 min", xpReward: 15, completed: false },
-        { id: "4-3", title: "Gestion des événements", type: "exercise", duration: "25 min", xpReward: 20, completed: false },
-        { id: "4-4", title: "Listes et clés", type: "exercise", duration: "20 min", xpReward: 15, completed: false }
+        { id: "4-1", title: "Déploiement sur Vercel", type: "theory", duration: 25, xpReward: 20, completed: false },
+        { id: "4-2", title: "Déploiement sur Cloudflare", type: "theory", duration: 25, xpReward: 20, completed: false },
+        { id: "4-3", title: "Optimisation des Performances", type: "exercise", duration: 35, xpReward: 30, completed: false },
+        { id: "4-4", title: "Analytics et Monitoring", type: "project", duration: 30, xpReward: 25, completed: false }
       ]
     }
   ];

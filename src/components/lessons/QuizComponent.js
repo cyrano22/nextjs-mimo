@@ -1,12 +1,18 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function QuizComponent({ quiz }) {
+export default function QuizComponent({ quiz, theme: parentTheme = 'light' }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
+  const [localTheme, setLocalTheme] = useState(parentTheme);
+  
+  // Synchroniser le thème avec le thème parent lorsqu'il change
+  useEffect(() => {
+    setLocalTheme(parentTheme);
+  }, [parentTheme]);
   
   const handleAnswerSelect = (answer) => {
     setSelectedAnswers({
@@ -39,27 +45,29 @@ export default function QuizComponent({ quiz }) {
     setScore(0);
   };
   
+  const theme = localTheme;
+  
   if (showResults) {
     return (
       <div className="space-y-4">
-        <h3 className="font-medium text-lg text-primary-light dark:text-primary-dark">Résultats du quiz</h3>
-        <p className="text-lg text-secondary-light dark:text-secondary-dark">
-          Vous avez obtenu <span className="font-bold text-indigo-600">{score}/{quiz.questions.length}</span> réponses correctes
+        <h3 className={`font-medium text-lg ${theme === 'dark' ? 'text-indigo-400' : 'text-primary-light'}`}>Résultats du quiz</h3>
+        <p className={`text-lg ${theme === 'dark' ? 'text-emerald-400' : 'text-secondary-light'}`}>
+          Vous avez obtenu <span className={`font-bold ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`}>{score}/{quiz.questions.length}</span> réponses correctes
         </p>
         
         {score === quiz.questions.length ? (
-          <div className="p-4 bg-green-100 text-green-800 rounded-md">
+          <div className={`p-4 rounded-md ${theme === 'dark' ? 'bg-green-900 text-green-100' : 'bg-green-100 text-green-800'}`}>
             Félicitations ! Vous avez répondu correctement à toutes les questions.
           </div>
         ) : (
-          <div className="p-4 bg-yellow-100 text-yellow-800 rounded-md">
+          <div className={`p-4 rounded-md ${theme === 'dark' ? 'bg-yellow-900 text-yellow-100' : 'bg-yellow-100 text-yellow-800'}`}>
             Continuez à apprendre ! Vous pouvez réessayer le quiz pour améliorer votre score.
           </div>
         )}
         
         <button
           onClick={resetQuiz}
-          className="btn-primary mt-4"
+          className={`action-button mt-4 ${theme === 'dark' ? 'bg-indigo-700 hover:bg-indigo-800' : ''}`}
         >
           Réessayer le quiz
         </button>
@@ -69,20 +77,34 @@ export default function QuizComponent({ quiz }) {
   
   const question = quiz.questions[currentQuestion];
   
+  const getOptionClass = (index) => {
+    const isSelected = selectedAnswers[currentQuestion] === question.options[index];
+    
+    if (isSelected) {
+      return theme === 'dark' 
+        ? 'bg-indigo-900 border-indigo-700' 
+        : 'selected bg-indigo-50 border-indigo-300';
+    } else {
+      return '';
+    }
+  };
+
+  const handleOptionSelect = (index) => {
+    handleAnswerSelect(question.options[index]);
+  };
+
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-lg text-primary-light dark:text-primary-dark">{question.question}</h3>
+      <h3 className={`font-medium text-lg ${theme === 'dark' ? 'text-gray-100' : 'text-primary-light'}`}>{question.question}</h3>
       
       <div className="space-y-2">
         {question.options.map((option, index) => (
-          <div 
+          <div
             key={index}
-            onClick={() => handleAnswerSelect(option)}
-            className={`p-3 border rounded-md cursor-pointer transition-colors text-secondary-light dark:text-secondary-dark ${
-              selectedAnswers[currentQuestion] === option 
-                ? 'border-indigo-500 bg-indigo-50' 
-                : 'border-gray-300 hover:border-indigo-300'
-            }`}
+            onClick={() => handleOptionSelect(index)}
+            className={`quiz-option p-3 mb-2 rounded-lg border cursor-pointer transition-all font-medium ${
+              theme === 'dark' ? 'border-gray-600 text-gray-200' : ''
+            } ${getOptionClass(index)}`}
           >
             {option}
           </div>
@@ -90,20 +112,24 @@ export default function QuizComponent({ quiz }) {
       </div>
       
       <div className="flex justify-between items-center mt-6">
-        <div className="text-sm text-gray-500">
-          Question {currentQuestion + 1} sur {quiz.questions.length}
+        <div className={`p-4 rounded-md ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
+          <p className={`text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>Question {currentQuestion + 1} sur {quiz.questions.length}</p>
         </div>
         
         <button
           onClick={handleNextQuestion}
           disabled={selectedAnswers[currentQuestion] === undefined}
-          className={`btn-primary ${
+          className={`action-button ${
             selectedAnswers[currentQuestion] === undefined 
-              ? 'opacity-50 cursor-not-allowed' 
-              : ''
+              ? theme === 'dark'
+                ? 'opacity-50 bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'opacity-50 cursor-not-allowed' 
+              : theme === 'dark'
+                ? 'bg-indigo-700 hover:bg-indigo-800'
+                : ''
           }`}
         >
-          {currentQuestion < quiz.questions.length - 1 ? 'Question suivante' : 'Voir les résultats'}
+          {currentQuestion < quiz.questions.length - 1 ? 'Question suivante' : 'Terminer le quiz'}
         </button>
       </div>
     </div>

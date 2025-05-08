@@ -12,13 +12,19 @@ export default function CodeEditor({
   onCodeRun,
   readOnly = false,
   showPreview = true,
-  autoPreview = true
+  autoPreview = true,
+  theme: parentTheme = 'light'
 }) {
   const [code, setCode] = useState(initialCode);
   const [previewCode, setPreviewCode] = useState(initialCode);
   const [previewVisible, setPreviewVisible] = useState(showPreview);
   const [splitView, setSplitView] = useState(true);
-  const [theme, setTheme] = useState('light');
+  const [localTheme, setLocalTheme] = useState(parentTheme);
+  
+  // Synchroniser le thème avec le thème parent lorsqu'il change
+  useEffect(() => {
+    setLocalTheme(parentTheme);
+  }, [parentTheme]);
   
   // Mettre à jour le code de prévisualisation automatiquement ou lors de l'exécution manuelle
   useEffect(() => {
@@ -57,15 +63,34 @@ export default function CodeEditor({
   };
   
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    const newTheme = localTheme === 'light' ? 'dark' : 'light';
+    setLocalTheme(newTheme);
+    
+    // Si l'application utilise localStorage pour le thème, optionnel
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', newTheme);
+      
+      if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
   };
   
+  // Utiliser localTheme pour tous les styles conditionnels
+  const theme = localTheme;
+  
   return (
-    <div className="w-full rounded-lg border border-gray-200 overflow-hidden">
+    <div className={`w-full rounded-lg border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} overflow-hidden`}>
       {/* Barre d'outils */}
-      <div className="flex items-center justify-between bg-gray-100 px-4 py-2 border-b border-gray-200">
+      <div className={`flex items-center justify-between px-4 py-2 border-b ${
+        theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-200'
+      }`}>
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-gray-700">
+          <span className={`text-sm font-medium ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+          }`}>
             {language.charAt(0).toUpperCase() + language.slice(1)}
           </span>
           
@@ -91,7 +116,11 @@ export default function CodeEditor({
         <div className="flex items-center space-x-2">
           <button
             onClick={togglePreview}
-            className={`p-1 rounded ${previewVisible ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}
+            className={`p-1 rounded ${
+              theme === 'dark'
+                ? (previewVisible ? 'bg-blue-900 text-blue-300' : 'bg-gray-700 text-gray-300')
+                : (previewVisible ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600')
+            }`}
             title={previewVisible ? "Masquer la prévisualisation" : "Afficher la prévisualisation"}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -103,7 +132,11 @@ export default function CodeEditor({
           {previewVisible && (
             <button
               onClick={toggleSplitView}
-              className={`p-1 rounded ${splitView ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}
+              className={`p-1 rounded ${
+                theme === 'dark'
+                  ? (splitView ? 'bg-blue-900 text-blue-300' : 'bg-gray-700 text-gray-300')
+                  : (splitView ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600')
+              }`}
               title={splitView ? "Vue plein écran" : "Vue partagée"}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -177,14 +210,17 @@ export default function CodeEditor({
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className={`${splitView ? 'md:w-1/2 md:border-l' : 'w-full'} border-t md:border-t-0 border-gray-200`}
+            className={`${splitView ? 'md:w-1/2 md:border-l' : 'w-full'} ${
+              theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+            } border-t md:border-t-0`}
             style={{ height: splitView ? height : 'auto' }}
           >
-            <div className="p-4 h-full">
+            <div className={`p-4 h-full ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
               <CodePreviewSandbox 
                 code={previewCode} 
                 language={language} 
-                height={splitView ? "100%" : "300px"} 
+                height={splitView ? "100%" : "300px"}
+                theme={theme}
               />
             </div>
           </motion.div>

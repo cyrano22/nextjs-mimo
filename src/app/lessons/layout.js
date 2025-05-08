@@ -1,60 +1,14 @@
-"use client"
+"use client";
 
 import Link from 'next/link';
+import NextjsSidebar from '../../components/ui/NextjsSidebar';
 
 export default function LessonsLayout({ children }) {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex">
       {/* Sidebar Navigation */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
-        <div className="p-4 border-b border-gray-200">
-          <Link href="/" className="flex items-center">
-            <span className="text-xl font-bold text-indigo-600">NextJS Mimo</span>
-          </Link>
-        </div>
-        <nav className="p-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Modules</p>
-          <ul className="space-y-1">
-            <li>
-              <Link href="/lessons/module/1" className="block px-4 py-2 rounded-md hover:bg-indigo-50 hover:text-indigo-600">
-                Introduction à Next.js
-              </Link>
-            </li>
-            <li>
-              <Link href="/lessons/module/2" className="block px-4 py-2 rounded-md hover:bg-indigo-50 hover:text-indigo-600">
-                Fondamentaux de Next.js
-              </Link>
-            </li>
-            <li>
-              <Link href="/lessons/module/3" className="block px-4 py-2 rounded-md hover:bg-indigo-50 hover:text-indigo-600">
-                Fonctionnalités Avancées
-              </Link>
-            </li>
-            <li>
-              <Link href="/lessons/module/4" className="block px-4 py-2 rounded-md hover:bg-indigo-50 hover:text-indigo-600">
-                Déploiement et Performance
-              </Link>
-            </li>
-          </ul>
-          
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">Navigation</p>
-          <ul className="space-y-1">
-            <li>
-              <Link href="/dashboard" className="block px-4 py-2 rounded-md hover:bg-indigo-50 hover:text-indigo-600">
-                Tableau de bord
-              </Link>
-            </li>
-            <li>
-              <Link href="/profile" className="block px-4 py-2 rounded-md hover:bg-indigo-50 hover:text-indigo-600">
-                Mon profil
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <NextjsSidebar />
+      <div className="flex-1 ml-[240px]">
         {/* Top Navigation */}
         <header className="bg-white border-b border-gray-200 py-4 px-6 flex items-center justify-between">
           <div className="md:hidden">

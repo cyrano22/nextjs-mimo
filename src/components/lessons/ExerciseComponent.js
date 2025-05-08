@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function ExerciseComponent({ exercise }) {
+export default function ExerciseComponent({ exercise, theme: parentTheme = 'light' }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [localTheme, setLocalTheme] = useState(parentTheme);
+  
+  // Synchroniser le thème avec le thème parent lorsqu'il change
+  useEffect(() => {
+    setLocalTheme(parentTheme);
+  }, [parentTheme]);
   
   const handleOptionToggle = (optionId) => {
     if (!isSubmitted) {
@@ -47,25 +53,34 @@ export default function ExerciseComponent({ exercise }) {
     setFeedback(null);
   };
   
+  // Utiliser localTheme pour tous les styles conditionnels
+  const theme = localTheme;
+  
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-lg">{exercise.title}</h3>
-      <p className="text-gray-700">{exercise.description}</p>
+      <h3 className={`font-medium text-lg ${theme === 'dark' ? 'text-gray-100' : ''}`}>{exercise.title}</h3>
+      <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>{exercise.description}</p>
       
       <div className="space-y-2 mt-4">
         {exercise.options.map((option) => (
           <div 
             key={option.id}
             onClick={() => handleOptionToggle(option.id)}
-            className={`p-3 border rounded-md cursor-pointer transition-colors ${
+            className={`exercise-option p-3 border rounded-md cursor-pointer transition-colors ${
+              theme === 'dark' ? 'border-gray-600 text-gray-200' : ''
+            } ${
               selectedOptions.includes(option.id) 
-                ? 'border-indigo-500 bg-indigo-50' 
-                : 'border-gray-300 hover:border-indigo-300'
+                ? theme === 'dark' ? 'bg-indigo-900 border-indigo-700' : 'selected bg-indigo-50 border-indigo-300'
+                : ''
             } ${
               isSubmitted && option.correct 
-                ? 'border-green-500 bg-green-50' 
+                ? theme === 'dark' 
+                  ? 'border-green-600 bg-green-900 text-green-100' 
+                  : 'border-green-500 bg-green-50' 
                 : isSubmitted && selectedOptions.includes(option.id) && !option.correct 
-                  ? 'border-red-500 bg-red-50' 
+                  ? theme === 'dark'
+                    ? 'border-red-600 bg-red-900 text-red-100'
+                    : 'border-red-500 bg-red-50'
                   : ''
             }`}
           >
@@ -73,7 +88,7 @@ export default function ExerciseComponent({ exercise }) {
               <div className={`w-5 h-5 rounded-md border mr-3 flex items-center justify-center ${
                 selectedOptions.includes(option.id) 
                   ? 'bg-indigo-600 border-indigo-600 text-white' 
-                  : 'border-gray-300'
+                  : theme === 'dark' ? 'border-gray-600' : 'border-gray-300'
               }`}>
                 {selectedOptions.includes(option.id) && (
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -88,7 +103,11 @@ export default function ExerciseComponent({ exercise }) {
       </div>
       
       {feedback && (
-        <div className={`p-4 rounded-md ${feedback.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+        <div className={`p-4 rounded-md ${
+          feedback.isCorrect 
+            ? theme === 'dark' ? 'bg-green-900 text-green-100' : 'bg-green-100 text-green-800'
+            : theme === 'dark' ? 'bg-red-900 text-red-100' : 'bg-red-100 text-red-800'
+        }`}>
           {feedback.message}
         </div>
       )}
@@ -97,22 +116,38 @@ export default function ExerciseComponent({ exercise }) {
         {!isSubmitted ? (
           <button
             onClick={handleSubmit}
-            disabled={selectedOptions.length === 0}
-            className={`btn-primary ${selectedOptions.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={selectedOptions.length === 0 || isSubmitted}
+            className={`action-button mt-4 ${
+              selectedOptions.length === 0
+                ? theme === 'dark'
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                : theme === 'dark'
+                  ? 'bg-indigo-700 hover:bg-indigo-800'
+                  : 'bg-indigo-600 hover:bg-indigo-700'
+            }`}
           >
-            Vérifier
+            Valider ma réponse
           </button>
         ) : (
           <button
             onClick={resetExercise}
-            className="btn-secondary"
+            className={`action-button ${
+              theme === 'dark'
+                ? 'bg-emerald-700 hover:bg-emerald-800'
+                : 'bg-emerald-600 hover:bg-emerald-700'
+            }`}
           >
             Réessayer
           </button>
         )}
         
         {feedback && feedback.isCorrect && (
-          <button className="btn-primary">
+          <button className={`action-button ${
+            theme === 'dark'
+              ? 'bg-indigo-700 hover:bg-indigo-800'
+              : 'bg-indigo-600 hover:bg-indigo-700'
+          }`}>
             Continuer
           </button>
         )}

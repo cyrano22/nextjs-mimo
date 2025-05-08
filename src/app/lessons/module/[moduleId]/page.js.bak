@@ -4,10 +4,11 @@ import Link from "next/link";
 
 export default function ModulePage({ params }) {
   const moduleId = params.moduleId;
+  console.log("Module ID reçu :", moduleId, "type:", typeof moduleId);
 
   // Données du module (dans une application réelle, ces données viendraient d'une base de données)
   const moduleData = {
-    1: {
+    "1": {
       title: "Introduction à Next.js",
       description:
         "Découvrez les bases de Next.js, ses avantages par rapport à React et comment configurer votre premier projet.",
@@ -18,7 +19,7 @@ export default function ModulePage({ params }) {
         { id: 3, title: "Installation et Configuration" },
       ],
     },
-    2: {
+    "2": {
       title: "Fondamentaux de Next.js",
       description:
         "Maîtrisez le routage, les pages et la récupération de données dans Next.js.",
@@ -30,7 +31,7 @@ export default function ModulePage({ params }) {
         { id: 4, title: "Data Fetching" },
       ],
     },
-    3: {
+    "3": {
       title: "Fonctionnalités Avancées",
       description:
         "Explorez les API Routes, les middlewares, l'optimisation des images et l'internationalisation.",
@@ -42,7 +43,7 @@ export default function ModulePage({ params }) {
         { id: 4, title: "Internationalisation" },
       ],
     },
-    4: {
+    "4": {
       title: "Déploiement et Performance",
       description:
         "Apprenez à déployer et optimiser vos applications Next.js pour des performances maximales.",
@@ -55,6 +56,10 @@ export default function ModulePage({ params }) {
       ],
     },
   };
+
+  // Log pour déboguer
+  console.log("Modules disponibles:", Object.keys(moduleData));
+  console.log("Module trouvé:", moduleData[moduleId]);
 
   const module = moduleData[moduleId];
 

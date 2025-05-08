@@ -4,49 +4,127 @@
 @tailwind utilities;
 
 :root {
-  --primary-color: #4f46e5;
-  --primary-hover: #4338ca;
-  --secondary-color: #10b981;
-  --secondary-hover: #059669;
-  --accent-color: #1976d2;
-  --accent-hover: #ea580c;
-  --background-light: #ffffff;
-  --background-dark: #111827;
-  --text-light: #1f2937;
-  --text-dark: #f9fafb;
-  --border-light: #e5e7eb;
-  --border-dark: #374151;
-  --success: #10b981;
-  --error: #ef4444;
-  --warning: #f59e0b;
-  --info: #3b82f6;
+  /* Couleurs principales alignées avec tailwind.config.js */
+  --primary-color: #4f46e5; /* indigo-600 */
+  --primary-hover: #4338ca; /* indigo-700 */
+  --primary-darker: #3730a3; /* indigo-800 */
+  
+  --secondary-color: #10b981; /* emerald-500 */
+  --secondary-hover: #059669; /* emerald-600 */
+  
+  --accent-color: #f59e0b; /* amber-500 */
+  --accent-hover: #d97706; /* amber-600 */
+  
+  /* Couleurs de statut */
+  --success: #059669; /* emerald-600 */
+  --error: #dc2626; /* red-600 */
+  --warning: #d97706; /* amber-600 */
+  --info: #2563eb; /* blue-600 */
+  
+  /* Mode clair - aligné avec tailwind.config.js */
   --bg-primary: #ffffff;
-  --text-primary: #121212;
-  --text-secondary: #333333;
-  --accent-color: #1976d2;
+  --bg-secondary: #f8fafc; /* slate-50 */
+  --bg-tertiary: #f1f5f9; /* slate-100 */
+  
+  --text-primary: #0f172a; /* slate-900 */
+  --text-secondary: #334155; /* slate-700 */
+  --text-tertiary: #64748b; /* slate-500 */
+  
+  /* Couleurs des bordures */
+  --border-color: #e2e8f0; /* slate-200 */
+  --border-focus: #94a3b8; /* slate-400 */
+  --border-light: #e2e8f0; /* slate-200 */
+  --border-medium: #cbd5e1; /* slate-300 */
+  --border-dark: #94a3b8; /* slate-400 */
+  
+  /* Couleurs des contrôles */
+  --input-bg: #ffffff;
+  --input-text: #0f172a; /* slate-900 */
+  --input-placeholder: #94a3b8; /* slate-400 */
+  
+  /* Couleurs des boutons */
+  --button-text: #ffffff;
+  --button-disabled-bg: #cbd5e1; /* slate-300 */
+  --button-disabled-text: #64748b; /* slate-500 */
 }
 
+/* Mode sombre */
 .dark {
-  --bg-primary: #121212;
-  --text-primary: #ffffff;
-  --text-secondary: #e0e0e0;
-  --accent-color: #90caf9;
+  /* Mode sombre - aligné avec tailwind.config.js */
+  --bg-primary: #0f172a; /* slate-900 */
+  --bg-secondary: #1e293b; /* slate-800 */
+  --bg-tertiary: #334155; /* slate-700 */
+  
+  --text-primary: #f8fafc; /* slate-50 */
+  --text-secondary: #e2e8f0; /* slate-200 */
+  --text-tertiary: #cbd5e1; /* slate-300 */
+  
+  /* Couleurs des bordures en mode sombre */
+  --border-light: #334155; /* slate-700 */
+  --border-medium: #475569; /* slate-600 */
+  --border-dark: #64748b; /* slate-500 */
+  --border-color: #334155; /* slate-700 */
+  --border-focus: #cbd5e1; /* slate-300 */
+  
+  /* Couleurs des contrôles en mode sombre */
+  --input-bg: #1e293b; /* slate-800 */
+  --input-text: #f8fafc; /* slate-50 */
+  --input-placeholder: #64748b; /* slate-500 */
+  
+  /* Les couleurs principales restent les mêmes mais peuvent être ajustées pour un meilleur contraste */
+  --primary-color: #6366f1; /* indigo-500 - légèrement plus clair pour le contraste */
+  --primary-hover: #4f46e5; /* indigo-600 */
+  
+  /* Couleurs des boutons en mode sombre */
+  --button-text: #ffffff;
+  --button-disabled-bg: #475569; /* slate-600 */
+  --button-disabled-text: #94a3b8; /* slate-400 */
 }
 
 /* Styles de base */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: var(--text-light);
-  background-color: #f9fafb;
-  transition: background-color 0.3s ease, color 0.3s ease;
   background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Styles pour les modules et leçons */
+.lesson-container, 
+.module-container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+.lesson-content,
+.module-content {
   color: var(--text-primary);
 }
 
-/* Assurer la lisibilité des textes dans les modules et leçons */
-[class*="lesson-"], 
-[class*="module-"] {
-  color: var(--text-primary) !important;
+.lesson-header,
+.module-header {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.lesson-navigation,
+.module-navigation {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
+}
+
+.lesson-tabs button,
+.module-tabs button {
+  color: var(--text-secondary);
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.lesson-tabs button.active,
+.module-tabs button.active {
+  color: var(--primary-color);
+  background-color: var(--bg-tertiary);
+  border-color: var(--primary-color);
 }
 
 /* Améliorer les contrastes sur les différents éléments */
