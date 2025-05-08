@@ -6,6 +6,7 @@
     "dev": "next dev -p 3004",
     "dev:turbo": "NEXT_TURBO=1 next dev -p 3004",
     "build": "next build",
+    "build:vercel": "next build",
     "build:analyze": "ANALYZE=true next build",
     "build:fix": "npm install critters && node scripts/fix-server-components.js && next build --no-lint",
     "build:diagnose": "node scripts/diagnose-components.js && next build",
