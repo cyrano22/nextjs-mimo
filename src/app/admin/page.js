@@ -5,6 +5,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import ProtectedRoute from '../../components/auth/ProtectedRoute';
 import { motion } from 'framer-motion';
 
+// Indiquer à Next.js de ne pas prévisualiser cette page pendant le build
+export const dynamic = 'force-dynamic';
+
 export default function AdminDashboardPage() {
   // Utiliser le composant ProtectedRoute pour protéger cette page
   return (

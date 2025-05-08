@@ -30,7 +30,12 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
       hasExample: lesson.hasExample !== undefined ? lesson.hasExample : !!lesson.example,
       hasExercise: lesson.hasExercise !== undefined ? lesson.hasExercise : !!lesson.exercise, 
       hasQuiz: lesson.hasQuiz !== undefined ? lesson.hasQuiz : !!lesson.quiz,
-      hasProject: lesson.hasProject !== undefined ? lesson.hasProject : !!lesson.project
+      hasProject: lesson.hasProject !== undefined ? lesson.hasProject : !!lesson.project,
+      // S'assurer que ces sections existent même si vides
+      example: lesson.example || {},
+      exercise: lesson.exercise || {},
+      quiz: lesson.quiz || {},
+      project: lesson.project || {}
     };
   }, [lesson]);
   
@@ -509,11 +514,6 @@ export default function LessonContent({ lesson, moduleId, lessonId }) {
                       className="mt-8 p-6 bg-green-50 border border-green-100 rounded-md text-center"
                     >
                       <h3 className="text-xl font-bold text-green-700">🎉 Félicitations !</h3>
-                      <p className="mb-4">Vous avez terminé cette leçon avec succès.</p>
-                      
-                      <div className="flex justify-center space-x-4">
-                        <Link href={`/lessons/module/${moduleId}/lesson/${parseInt(lessonId) + 1}`} className="btn-primary">
-                          Leçon suivante
                         </Link>
                         <Link href="/dashboard" className="btn-secondary">
                           Retour au tableau de bord

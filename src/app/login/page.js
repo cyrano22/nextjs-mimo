@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 
+// Indiquer à Next.js de ne pas prévisualiser cette page pendant le build
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
