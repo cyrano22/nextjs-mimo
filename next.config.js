@@ -15,11 +15,25 @@ const nextConfig = {
   
   // Configuration des options expérimentales
   experimental: {
-    optimizeCss: true,
+    // Désactivation de optimizeCss qui peut causer des problèmes
+    optimizeCss: false,
+    // Améliorer la compatibilité des modules vendeurs
+    esmExternals: 'loose',
   },
   
-  // Utiliser le mode de déploiement autonome
-  output: 'standalone',
+  // Utiliser le mode de compilation standard au lieu de standalone
+  // output: 'standalone', // Commenté pour débogage
+  
+  // Configuration de webpack pour résoudre les problèmes de modules
+  webpack: (config, { isServer }) => {
+    // Force webpack à résoudre framer-motion correctement
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'framer-motion': require.resolve('framer-motion'),
+    };
+    
+    return config;
+  },
 }
 
 module.exports = nextConfig

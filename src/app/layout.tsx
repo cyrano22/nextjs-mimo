@@ -2,7 +2,8 @@ import React from "react";
 import type { Metadata } from "next";
 import { Inter, Source_Code_Pro } from "next/font/google";
 import "./globals.css";
-import ClientLayout from "../components/layouts/ClientLayout";
+import MainLayout from "../components/layouts/MainLayout";
+import { Providers } from "./providers"; // Correction de l'importation sans extension
 
 const inter = Inter({
   variable: "--font-sans",
@@ -27,11 +28,17 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="fr">
-      <body
-        className={`${inter.variable} ${sourceCodePro.variable} antialiased`}
-      >
-        <ClientLayout>{children}</ClientLayout>
+    <html lang="fr" suppressHydrationWarning>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap"
+        />
+      </head>
+      <body className={`${inter.variable} ${sourceCodePro.variable} antialiased`}>
+        <Providers>
+          <MainLayout>{children}</MainLayout>
+        </Providers>
       </body>
     </html>
   );
