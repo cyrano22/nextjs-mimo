@@ -19,6 +19,7 @@
         "name": "next"
       }
     ],
+    "types": ["node", "next/types/global"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

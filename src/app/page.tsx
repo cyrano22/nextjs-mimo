@@ -10,6 +10,9 @@ interface Feature {
   title: string;
   description: string;
   icon: React.ReactNode;
+  subtitle?: string;
+  details?: string;
+  codeExample?: string;
 }
 
 interface CourseModule {
@@ -35,18 +38,19 @@ export default function HomePage() {
   }, []);
 
   // Données des fonctionnalités
- // 1. Mettez à jour votre type Feature pour inclure les propriétés manquantes (en optionnel)
-interface Feature {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  subtitle?: string;  // Propriété ajoutée
-  details?: string;   // Propriété ajoutée
-  codeExample?: string; // Propriété ajoutée
-}
-
-// 2. Mettez à jour votre tableau features avec les nouvelles propriétés
 const features: Feature[] = [
+  {
+    title: "Formulaire de contact multilingue",
+    description: "Découvrez notre formulaire de contact internationalisé avec prise en charge de plusieurs langues.",
+    icon: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+    ),
+    subtitle: "Support multilingue",
+    details: "Notre formulaire est disponible en anglais et en français avec une interface utilisateur adaptative.",
+    codeExample: ""
+  },
   {
     title: "Apprentissage interactif",
     description: "Apprenez Next.js à travers des leçons interactives avec visualisation en temps réel du code que vous écrivez.",

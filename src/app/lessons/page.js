@@ -1,11 +1,11 @@
-"use client"
+'use client';
 
 import Link from 'next/link';
 
 export default function LessonsPage() {
   return (
     <div className="text-gray-800 dark:text-white">
-      <h1 className="text-3xl font-bold mb-6">Modules d'apprentissage Next.js</h1>
+      <h1 className="text-3xl font-bold mb-6">Modules d&apos;apprentissage Next.js</h1>
       
       <div className="grid md:grid-cols-2 gap-6">
         <div className="card border-t-4 border-indigo-500 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -21,7 +21,7 @@ export default function LessonsPage() {
                 <span className="text-xs font-medium text-indigo-600 dark:text-indigo-300">1</span>
               </div>
               <Link href="/lessons/module/1/lesson/1" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                Qu'est-ce que Next.js
+                Qu&apos;est-ce que Next.js
               </Link>
             </div>
             <div className="flex items-center">
@@ -99,7 +99,7 @@ export default function LessonsPage() {
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Module 3: Fonctionnalités Avancées</h2>
             <span className="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs font-medium px-2.5 py-0.5 rounded">Avancé</span>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">Explorez les API Routes, les middlewares, l'optimisation des images et l'internationalisation.</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">Explorez les API Routes, les middlewares, l&apos;optimisation des images et l&apos;internationalisation.</p>
           
           <div className="space-y-2 mb-4">
             <div className="flex items-center">

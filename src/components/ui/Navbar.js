@@ -89,7 +89,7 @@ export default function Navbar() {
                   : "text-gray-700 hover:bg-gray-100"
               }`}
             >
-              Parcours d'apprentissage
+              Parcours d&apos;apprentissage
             </Link>
 
             <div className="relative group">
@@ -218,7 +218,7 @@ export default function Navbar() {
               <div className="absolute left-0 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="py-1">
                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 border-b">
-                    Modules d'apprentissage
+                    Modules d&apos;apprentissage
                   </div>
                   <Link
                     href="/lessons/module/1"
@@ -243,6 +243,30 @@ export default function Navbar() {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Module 4: Déploiement et Performance
+                  </Link>
+                  <Link
+                    href="/lessons/module/5"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Module 5: Projet Blog
+                  </Link>
+                  <Link
+                    href="/lessons/module/6"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Module 6: API et Backend
+                  </Link>
+                  <Link
+                    href="/lessons/module/7"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Module 7: Authentification
+                  </Link>
+                  <Link
+                    href="/lessons/module/8"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Module 8: State Management
                   </Link>
                   <div className="border-t border-gray-100"></div>
                   <Link
@@ -358,7 +382,7 @@ export default function Navbar() {
             }`}
             onClick={toggleMenu}
           >
-            Parcours d'apprentissage
+            Parcours d&apos;apprentissage
           </Link>
 
           <div className="border-t border-gray-100 my-2"></div>

@@ -1,5 +1,5 @@
 
-"use client";
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white">NextJS Mimo Clone</h3>
+            <h3 className="text-xl font-bold text-white">NextJS Academy</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
               Apprenez Next.js de manière interactive et créez des applications web modernes.
             </p>
@@ -37,7 +37,7 @@ export default function Footer() {
             <nav className="space-y-2">
               <Link href="/" className="block text-gray-300 hover:text-white">Accueil</Link>
               <Link href="/lessons" className="block text-gray-300 hover:text-white">Leçons</Link>
-              <Link href="/learning-path" className="block text-gray-300 hover:text-white">Parcours d'apprentissage</Link>
+              <Link href="/learning-path" className="block text-gray-300 hover:text-white">Parcours d&apos;apprentissage</Link>
               <Link href="/portfolio" className="block text-gray-300 hover:text-white">Portfolio</Link>
             </nav>
           </div>
@@ -54,17 +54,17 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <p className="text-gray-300 mb-2">Des questions ? Nous sommes là pour vous aider !</p>
-            <a href="mailto:support@nextjsmimo.com" className="text-indigo-400 hover:text-indigo-300">support@nextjsmimo.com</a>
+            <a href="mailto:support@nextjsacademy.com" className="text-indigo-400 hover:text-indigo-300">support@nextjsacademy.com</a>
           </div>
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © {currentYear} NextJS Mimo Clone. Tous droits réservés.
+            © {currentYear} NextJS Academy. Tous droits réservés.
           </p>
           <div className="mt-4 sm:mt-0 flex space-x-6">
             <Link href="/privacy" className="text-gray-400 hover:text-white text-sm">Politique de confidentialité</Link>
-            <Link href="/terms" className="text-gray-400 hover:text-white text-sm">Conditions d'utilisation</Link>
+            <Link href="/terms" className="text-gray-400 hover:text-white text-sm">Conditions d&apos;utilisation</Link>
           </div>
         </div>
       </div>

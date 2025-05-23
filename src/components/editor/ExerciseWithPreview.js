@@ -1,14 +1,38 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import CodeEditor from '../editor/CodeEditor';
 
-export default function ExerciseWithPreview({ exercise, onComplete }) {
-  const [userCode, setUserCode] = useState(exercise?.initialCode || '');
+export default function ExerciseWithPreview({ 
+  exercise = {},
+  onComplete = () => {}
+}) {
+  // Déstructuration avec valeurs par défaut
+  const {
+    id = 1,
+    title = 'Exercice',
+    description = 'Complétez cet exercice pour mettre en pratique vos connaissances.',
+    instructions = [
+      'Suivez les instructions pour compléter cet exercice.',
+      'Utilisez le code fourni comme point de départ.'
+    ],
+    initialCode = '// Écrivez votre code ici\n',
+    solutionCode = '// Solution de l\'exercice\n',
+    language = 'javascript',
+    difficulty = 'débutant',
+    xpReward = 0,
+    contributeToPortfolio = false
+  } = exercise;
+
+  // États du composant
+  const [userCode, setUserCode] = useState(initialCode);
   const [isCorrect, setIsCorrect] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [showSolution, setShowSolution] = useState(false);
+  
+  // Toujours utiliser le thème clair
+  const theme = 'light';
   
   // Animation variants
   const containerVariants = {
@@ -17,7 +41,7 @@ export default function ExerciseWithPreview({ exercise, onComplete }) {
       opacity: 1,
       transition: { 
         duration: 0.5,
-        when: "beforeChildren",
+        when: 'beforeChildren',
         staggerChildren: 0.1
       }
     }
@@ -32,22 +56,18 @@ export default function ExerciseWithPreview({ exercise, onComplete }) {
     }
   };
   
-  // Données simulées pour un exercice
-  const exerciseData = exercise || {
-    id: 1,
-    title: "Créer un composant de bouton",
-    description: "Créez un composant de bouton React qui accepte une prop 'text' et l'affiche.",
-    instructions: [
-      "Créez un composant fonctionnel appelé Button",
-      "Le composant doit accepter une prop 'text'",
-      "Affichez cette prop dans un élément button"
-    ],
-    initialCode: "function Button() {\n  // Votre code ici\n}\n\n// Exemple d'utilisation\nfunction App() {\n  return <Button text=\"Cliquez-moi\" />;\n}\n",
-    solutionCode: "function Button({ text }) {\n  return <button>{text}</button>;\n}\n\n// Exemple d'utilisation\nfunction App() {\n  return <Button text=\"Cliquez-moi\" />;\n}\n",
-    language: "react",
-    difficulty: "débutant",
-    xpReward: 30,
-    contributeToPortfolio: false
+  // Données de l'exercice avec les valeurs par défaut
+  const exerciseData = {
+    id,
+    title,
+    description,
+    instructions,
+    initialCode,
+    solutionCode,
+    language,
+    difficulty,
+    xpReward,
+    contributeToPortfolio
   };
   
   const handleCodeChange = (newCode) => {
@@ -154,14 +174,16 @@ export default function ExerciseWithPreview({ exercise, onComplete }) {
           <p className="text-gray-700">{exerciseData.description}</p>
         </motion.div>
         
-        <motion.div variants={itemVariants} className="mb-6">
-          <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Instructions</h4>
-          <ul className="list-disc pl-5 space-y-2 text-gray-600">
-            {exerciseData.instructions.map((instruction, index) => (
-              <li key={index}>{instruction}</li>
-            ))}
-          </ul>
-        </motion.div>
+        {exerciseData.instructions && exerciseData.instructions.length > 0 && (
+          <motion.div variants={itemVariants} className="mb-6">
+            <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Instructions</h4>
+            <ul className="list-disc pl-5 space-y-2 text-gray-600">
+              {exerciseData.instructions.map((instruction, index) => (
+                <li key={index}>{instruction}</li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
         
         <motion.div variants={itemVariants} className="mb-6">
           <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Votre code</h4>
@@ -172,6 +194,7 @@ export default function ExerciseWithPreview({ exercise, onComplete }) {
             height="300px"
             showPreview={true}
             autoPreview={true}
+            theme="light"
           />
         </motion.div>
         
