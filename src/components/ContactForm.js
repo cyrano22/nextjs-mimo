@@ -1,15 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations, useLocale, useRouter } from 'next-intl';
-import { usePathname } from 'next/navigation';
 
 export default function ContactForm() {
-  const t = useTranslations('form');
-  const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
-  
   const [formData, setFormData] = useState({
     name: '',
     email: '',

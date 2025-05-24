@@ -1,8 +1,5 @@
-"use client";
-
-import Link from 'next/link';
-import NextjsSidebar from '../../components/ui/NextjsSidebar';
 import Navbar from '../../components/ui/Navbar';
+import NextjsSidebar from '../../components/ui/NextjsSidebar';
 
 export default function LessonsLayout({ children }) {
   return (

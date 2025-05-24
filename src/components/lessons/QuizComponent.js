@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function QuizComponent({ quiz, theme: parentTheme = 'light' }) {
+export default function QuizComponent({ quiz, theme: parentTheme = 'light', onComplete = () => {} }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
@@ -43,6 +43,11 @@ export default function QuizComponent({ quiz, theme: parentTheme = 'light' }) {
     setSelectedAnswers({});
     setShowResults(false);
     setScore(0);
+    
+    // Appeler onComplete si le quiz est réussi
+    if (score === quiz.questions.length) {
+      onComplete();
+    }
   };
   
   const theme = localTheme;

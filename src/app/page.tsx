@@ -38,81 +38,145 @@ export default function HomePage() {
   }, []);
 
   // Données des fonctionnalités
-const features: Feature[] = [
-  {
-    title: "Formulaire de contact multilingue",
-    description: "Découvrez notre formulaire de contact internationalisé avec prise en charge de plusieurs langues.",
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
-    subtitle: "Support multilingue",
-    details: "Notre formulaire est disponible en anglais et en français avec une interface utilisateur adaptative.",
-    codeExample: ""
-  },
-  {
-    title: "Apprentissage interactif",
-    description: "Apprenez Next.js à travers des leçons interactives avec visualisation en temps réel du code que vous écrivez.",
-    subtitle: "Éditeur de code en temps réel",
-    details: "Modifiez le code et voyez immédiatement les résultats avec notre interface interactive",
-    codeExample: "React, useState, useEffect",
-    icon: (
-      <div className="relative">
-        <div className="absolute -inset-0.5 bg-indigo-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-indigo-600 relative z-10 group-hover:text-indigo-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  const features: Feature[] = [
+    {
+      title: "Formulaire de contact multilingue",
+      description:
+        "Découvrez notre formulaire de contact internationalisé avec prise en charge de plusieurs langues.",
+      icon: (
+        <svg
+          className="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
         </svg>
-      </div>
-    ),
-  },
-  {
-    title: "Parcours progressif",
-    description: "Évoluez du niveau débutant au niveau expert avec un parcours d'apprentissage structuré et adapté à votre rythme.",
-    subtitle: "Apprentissage structuré",
-    details: "Suivez un chemin d'apprentissage clairement défini avec des objectifs à chaque étape",
-    codeExample: "React, Components, Props",
-    icon: (
-      <div className="relative">
-        <div className="absolute -inset-0.5 bg-green-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-green-600 relative z-10 group-hover:text-green-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-      </div>
-    ),
-  },
-  {
-    title: "Système de gamification",
-    description: "Gagnez des points XP, débloquez des badges et suivez votre progression pour rester motivé tout au long de votre apprentissage.",
-    subtitle: "Apprentissage ludique",
-    details: "Restez motivé grâce à notre système de récompenses et de suivi de progression",
-    codeExample: "React, State Management",
-    icon: (
-      <div className="relative">
-        <div className="absolute -inset-0.5 bg-purple-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-purple-600 relative z-10 group-hover:text-purple-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-        </svg>
-      </div>
-    ),
-  },
-  {
-    title: "Portfolio professionnel",
-    description: "Créez un portfolio professionnel à partir des projets que vous réalisez pendant votre parcours d'apprentissage.",
-    subtitle: "Projets concrets",
-    details: "Développez des projets réels que vous pouvez présenter à votre future employeur",
-    codeExample: "Next.js, API Routes, Static Generation",
-    icon: (
-      <div className="relative">
-        <div className="absolute -inset-0.5 bg-orange-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-orange-600 relative z-10 group-hover:text-orange-400 transition duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-      </div>
-    ),
-  },
-];
-
+      ),
+      subtitle: "Support multilingue",
+      details:
+        "Notre formulaire est disponible en anglais et en français avec une interface utilisateur adaptative.",
+      codeExample: "",
+    },
+    {
+      title: "Apprentissage interactif",
+      description:
+        "Apprenez Next.js à travers des leçons interactives avec visualisation en temps réel du code que vous écrivez.",
+      subtitle: "Éditeur de code en temps réel",
+      details:
+        "Modifiez le code et voyez immédiatement les résultats avec notre interface interactive",
+      codeExample: "React, useState, useEffect",
+      icon: (
+        <div className="relative">
+          <div className="absolute -inset-0.5 bg-indigo-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 text-indigo-600 relative z-10 group-hover:text-indigo-400 transition duration-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            />
+          </svg>
+        </div>
+      ),
+    },
+    {
+      title: "Parcours progressif",
+      description:
+        "Évoluez du niveau débutant au niveau expert avec un parcours d'apprentissage structuré et adapté à votre rythme.",
+      subtitle: "Apprentissage structuré",
+      details:
+        "Suivez un chemin d'apprentissage clairement défini avec des objectifs à chaque étape",
+      codeExample: "React, Components, Props",
+      icon: (
+        <div className="relative">
+          <div className="absolute -inset-0.5 bg-green-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 text-green-600 relative z-10 group-hover:text-green-400 transition duration-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+        </div>
+      ),
+    },
+    {
+      title: "Système de gamification",
+      description:
+        "Gagnez des points XP, débloquez des badges et suivez votre progression pour rester motivé tout au long de votre apprentissage.",
+      subtitle: "Apprentissage ludique",
+      details:
+        "Restez motivé grâce à notre système de récompenses et de suivi de progression",
+      codeExample: "React, State Management",
+      icon: (
+        <div className="relative">
+          <div className="absolute -inset-0.5 bg-purple-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 text-purple-600 relative z-10 group-hover:text-purple-400 transition duration-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+            />
+          </svg>
+        </div>
+      ),
+    },
+    {
+      title: "Portfolio professionnel",
+      description:
+        "Créez un portfolio professionnel à partir des projets que vous réalisez pendant votre parcours d'apprentissage.",
+      subtitle: "Projets concrets",
+      details:
+        "Développez des projets réels que vous pouvez présenter à votre future employeur",
+      codeExample: "Next.js, API Routes, Static Generation",
+      icon: (
+        <div className="relative">
+          <div className="absolute -inset-0.5 bg-orange-400 rounded-lg opacity-50 group-hover:opacity-75 transition duration-200 animate-tilt"></div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 text-orange-600 relative z-10 group-hover:text-orange-400 transition duration-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            />
+          </svg>
+        </div>
+      ),
+    },
+  ];
 
   // Données des modules de cours
   const courseModules: CourseModule[] = [

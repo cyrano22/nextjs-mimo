@@ -12,7 +12,8 @@ export const defaultExercise = {
 
 export default function ExerciseComponent({ 
   exercise: propExercise, 
-  theme: parentTheme = 'light' 
+  theme: parentTheme = 'light',
+  onComplete = () => {}
 }) {
   // Fusion avec les valeurs par défaut
   const exercise = { ...defaultExercise, ...propExercise };
@@ -60,12 +61,22 @@ export default function ExerciseComponent({
     });
     
     setIsSubmitted(true);
+    
+    // Appeler le callback onComplete si la réponse est correcte
+    if (isCorrect) {
+      onComplete();
+    }
   };
   
   const resetExercise = () => {
-    setSelectedOptions([]);
-    setIsSubmitted(false);
-    setFeedback(null);
+    // Mettre à jour l'état
+    setIsSubmitted(true);
+    setFeedback(isCorrect ? 'Correct !' : 'Incorrect. Essayez encore.');
+    
+    // Appeler le callback onComplete si la réponse est correcte
+    if (isCorrect) {
+      onComplete();
+    }
   };
   
   // Utiliser localTheme pour tous les styles conditionnels
