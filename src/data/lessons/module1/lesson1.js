@@ -125,6 +125,6 @@ export default function Home() {
   hasExercise: true,
   hasQuiz: true,
   hasProject: true
-}
+};
 
-export default lesson1
+export default lesson1;

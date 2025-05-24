@@ -1,34 +1,34 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import CodeEditor from "../../components/editor/CodeEditor";
-import CodePlayground from "../../components/editor/CodePlayground";
-import ExerciseWithPreview from "../../components/editor/ExerciseWithPreview";
-import Link from "next/link";
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import CodeEditor from '../../components/editor/CodeEditor'
+import CodePlayground from '../../components/editor/CodePlayground'
+import ExerciseWithPreview from '../../components/editor/ExerciseWithPreview'
+import Link from 'next/link'
 
-export default function ReactFundamentalsPage() {
-  const [activeSection, setActiveSection] = useState("introduction");
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+export default function ReactFundamentalsPage () {
+  const [activeSection, setActiveSection] = useState('introduction')
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [progress, setProgress] = useState(() => {
     if (typeof window !== 'undefined') {
-      return JSON.parse(localStorage.getItem('reactCourseProgress') || '{}');
+      return JSON.parse(localStorage.getItem('reactCourseProgress') || '{}')
     }
-    return {};
-  });
-  
+    return {}
+  })
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('reactCourseProgress', JSON.stringify(progress));
+      localStorage.setItem('reactCourseProgress', JSON.stringify(progress))
     }
-  }, [progress]);
+  }, [progress])
 
-  const markAsCompleted = (sectionKey) => {
+  const markAsCompleted = sectionKey => {
     setProgress(prev => ({
       ...prev,
       [sectionKey]: true
-    }));
-  };
+    }))
+  }
 
   // Animation variants
   const containerVariants = {
@@ -37,27 +37,27 @@ export default function ReactFundamentalsPage() {
       opacity: 1,
       transition: {
         duration: 0.5,
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-      },
-    },
-  };
+        when: 'beforeChildren',
+        staggerChildren: 0.1
+      }
+    }
+  }
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.3 },
-    },
-  };
+      transition: { duration: 0.3 }
+    }
+  }
 
   // Contenu des sections
   const sections = {
     introduction: {
-      title: "Introduction à React",
-      icon: "📚",
-      color: "bg-blue-500",
+      title: 'Introduction à React',
+      icon: '📚',
+      color: 'bg-blue-500',
       content: `
         React est une bibliothèque JavaScript pour construire des interfaces utilisateur. 
         Développée par Facebook (maintenant Meta), elle est devenue l'une des bibliothèques 
@@ -94,12 +94,12 @@ function App() {
 }
 
 export default App;`,
-      language: "jsx",
+      language: 'jsx'
     },
     components: {
-      title: "Composants et Props",
-      icon: "🧩",
-      color: "bg-green-500",
+      title: 'Composants et Props',
+      icon: '🧩',
+      color: 'bg-green-500',
       content: `
         Les composants sont les blocs de construction de toute application React.
         Un composant est une fonction ou une classe qui accepte des entrées (appelées "props") 
@@ -152,12 +152,12 @@ function App() {
     </div>
   );
 }`,
-      language: "jsx",
+      language: 'jsx'
     },
     state: {
-      title: "État (State) et Cycle de vie",
-      icon: "⏳",
-      color: "bg-red-500",
+      title: 'État (State) et Cycle de vie',
+      icon: '⏳',
+      color: 'bg-red-500',
       content: `
         L'état (state) est un objet qui contient des données spécifiques à un composant 
         et qui peuvent changer au fil du temps. Contrairement aux props, l'état est géré 
@@ -215,12 +215,12 @@ function Horloge() {
     </div>
   );
 }`,
-      language: "jsx",
+      language: 'jsx'
     },
     hooks: {
-      title: "Hooks React",
-      icon: "🔧",
-      color: "bg-purple-500",
+      title: 'Hooks React',
+      icon: '🔧',
+      color: 'bg-purple-500',
       content: `
         Les Hooks sont une addition à React 16.8 qui permettent d'utiliser l'état et d'autres 
         fonctionnalités de React sans écrire de classe. Ils permettent de réutiliser la logique 
@@ -341,12 +341,12 @@ function useLocalStorage(key, initialValue) {
   
   return [storedValue, setValue];
 }`,
-      language: "jsx",
+      language: 'jsx'
     },
     lists: {
-      title: "Listes et Clés",
-      icon: "📋",
-      color: "bg-yellow-500",
+      title: 'Listes et Clés',
+      icon: '📋',
+      color: 'bg-yellow-500',
       content: `
         En React, vous transformerez souvent des tableaux en listes d'éléments.
         
@@ -404,7 +404,9 @@ function ListeFiltrable({ items }) {
     if (tri === 'date') {
       return new Date(b.date) - new Date(a.date);
     }
-    return a.nom.localeCompare(b.nom);
+    const nomA = a?.nom || '';
+    const nomB = b?.nom || '';
+    return nomA.localeCompare(nomB);
   });
   
   return (
@@ -433,12 +435,12 @@ function ListeFiltrable({ items }) {
     </div>
   );
 }`,
-      language: "jsx",
+      language: 'jsx'
     },
     forms: {
-      title: "Formulaires et Événements",
-      icon: "📅",
-      color: "bg-pink-500",
+      title: 'Formulaires et Événements',
+      icon: '📅',
+      color: 'bg-pink-500',
       content: `
         En React, les formulaires fonctionnent un peu différemment du HTML standard.
         
@@ -543,12 +545,12 @@ function FormulaireContact() {
     </form>
   );
 }`,
-      language: "jsx",
+      language: 'jsx'
     },
     context: {
-      title: "Context API",
-      icon: "🌐",
-      color: "bg-teal-500",
+      title: 'Context API',
+      icon: '🌐',
+      color: 'bg-teal-500',
       content: `
         Le Context API de React permet de partager des données entre des composants sans avoir 
         à passer explicitement les props à chaque niveau.
@@ -638,12 +640,12 @@ function App() {
     </ThemeProvider>
   );
 }`,
-      language: "jsx",
+      language: 'jsx'
     },
     exercise: {
-      title: "Exercice Pratique",
-      icon: "🛠️",
-      color: "bg-orange-500",
+      title: 'Exercice Pratique',
+      icon: '🛠️',
+      color: 'bg-orange-500',
       content: `
         Maintenant que vous avez appris les bases de React, essayez de résoudre cet exercice pratique.
         
@@ -728,12 +730,12 @@ function App() {
     </div>
   );
 }`,
-      language: "jsx",
+      language: 'jsx'
     },
     playground: {
-      title: "Playground React",
-      icon: "⚙️",
-      color: "bg-gray-500",
+      title: 'Playground React',
+      icon: '⚙️',
+      color: 'bg-gray-500',
       content: `
         Utilisez ce playground pour expérimenter avec React. 
         Écrivez votre code JSX dans l'éditeur et voyez le résultat en temps réel.
@@ -801,23 +803,25 @@ ReactDOM.render(
   <MonApp />,
   document.getElementById('root')
 );`,
-      language: "jsx",
-    },
-  };
+      language: 'jsx'
+    }
+  }
 
-  const totalSections = Object.keys(sections).length;
-  const completedSections = Object.values(progress).filter(Boolean).length;
-  const progressPercentage = Math.round((completedSections / totalSections) * 100);
+  const totalSections = Object.keys(sections).length
+  const completedSections = Object.values(progress).filter(Boolean).length
+  const progressPercentage = Math.round(
+    (completedSections / totalSections) * 100
+  )
 
-  const handleSectionChange = (section) => {
-    setActiveSection(section);
-    setShowMobileMenu(false);
+  const handleSectionChange = section => {
+    setActiveSection(section)
+    setShowMobileMenu(false)
     // Auto-scroll to top when changing sections
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const renderSectionContent = () => {
-    const section = sections[activeSection];
+    const section = sections[activeSection]
 
     return (
       <motion.div
@@ -826,72 +830,72 @@ ReactDOM.render(
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.3 }}
-        className="mt-6"
+        className='mt-6'
       >
-        <div className="flex items-center space-x-3 mb-4">
-          <div className={`w-10 h-10 ${section.color} rounded-lg flex items-center justify-center text-white shadow-lg`}>
-            <span className="text-xl">{section.icon}</span>
+        <div className='flex items-center space-x-3 mb-4'>
+          <div
+            className={`w-10 h-10 ${section.color} rounded-lg flex items-center justify-center text-white shadow-lg`}
+          >
+            <span className='text-xl'>{section.icon}</span>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            {section.title}
-          </h2>
+          <h2 className='text-2xl font-bold text-gray-900'>{section.title}</h2>
         </div>
-        
-        <div className="prose max-w-none mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          {section.content.split("\n").map((paragraph, index) => (
-            <p key={index} className="mb-4 text-gray-700">
+
+        <div className='prose max-w-none mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200'>
+          {section.content.split('\n').map((paragraph, index) => (
+            <p key={index} className='mb-4 text-gray-700'>
               {paragraph}
             </p>
           ))}
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+        <div className='bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8'>
           {section.playground ? (
             <CodePlayground
               initialCode={section.initialCode}
               language={section.language}
-              title="Playground React"
-              description="Expérimentez avec React et voyez le résultat en temps réel."
-              height="500px"
+              title='Playground React'
+              description='Expérimentez avec React et voyez le résultat en temps réel.'
+              height='500px'
             />
           ) : section.exercise ? (
             <ExerciseWithPreview
               exercise={{
                 id: 1,
-                title: "Créer un composant de compteur",
+                title: 'Créer un composant de compteur',
                 description:
                   "Créez un composant de compteur React qui permet d'incrémenter et de décrémenter un nombre.",
                 instructions: [
                   "Utilisez useState pour créer une variable d'état 'count' initialisée à 0",
-                  "Créez une fonction pour incrémenter le compteur",
-                  "Créez une fonction pour décrémenter le compteur (sans aller en dessous de 0)",
-                  "Affichez le compteur et ajoutez des boutons pour incrémenter et décrémenter",
+                  'Créez une fonction pour incrémenter le compteur',
+                  'Créez une fonction pour décrémenter le compteur (sans aller en dessous de 0)',
+                  'Affichez le compteur et ajoutez des boutons pour incrémenter et décrémenter'
                 ],
                 initialCode: section.initialCode,
                 solutionCode: section.solutionCode,
                 language: section.language,
-                difficulty: "débutant",
-                xpReward: 30,
+                difficulty: 'débutant',
+                xpReward: 30
               }}
             />
           ) : (
             <CodeEditor
               initialCode={section.code}
               language={section.language}
-              height="350px"
+              height='350px'
               showPreview={true}
               autoPreview={true}
             />
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-8 mb-12">
-          <button 
+        <div className='flex justify-between items-center mt-8 mb-12'>
+          <button
             onClick={() => {
-              const sectionKeys = Object.keys(sections);
-              const currentIndex = sectionKeys.indexOf(activeSection);
+              const sectionKeys = Object.keys(sections)
+              const currentIndex = sectionKeys.indexOf(activeSection)
               if (currentIndex > 0) {
-                handleSectionChange(sectionKeys[currentIndex - 1]);
+                handleSectionChange(sectionKeys[currentIndex - 1])
               }
             }}
             disabled={activeSection === Object.keys(sections)[0]}
@@ -901,8 +905,17 @@ ReactDOM.render(
                 : 'text-indigo-600 border-indigo-200 hover:bg-indigo-50'
             } transition-colors`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-5 w-5'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+            >
+              <path
+                fillRule='evenodd'
+                d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
+                clipRule='evenodd'
+              />
             </svg>
             <span>Section précédente</span>
           </button>
@@ -917,221 +930,333 @@ ReactDOM.render(
           >
             {progress[activeSection] ? (
               <>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  className='h-5 w-5'
+                  viewBox='0 0 20 20'
+                  fill='currentColor'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                    clipRule='evenodd'
+                  />
                 </svg>
                 <span>Section complétée</span>
               </>
             ) : (
               <>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  className='h-5 w-5'
+                  viewBox='0 0 20 20'
+                  fill='currentColor'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+                    clipRule='evenodd'
+                  />
                 </svg>
                 <span>Marquer comme complété</span>
               </>
             )}
           </button>
 
-          <button 
+          <button
             onClick={() => {
-              const sectionKeys = Object.keys(sections);
-              const currentIndex = sectionKeys.indexOf(activeSection);
+              const sectionKeys = Object.keys(sections)
+              const currentIndex = sectionKeys.indexOf(activeSection)
               if (currentIndex < sectionKeys.length - 1) {
-                handleSectionChange(sectionKeys[currentIndex + 1]);
+                handleSectionChange(sectionKeys[currentIndex + 1])
               }
             }}
-            disabled={activeSection === Object.keys(sections)[Object.keys(sections).length - 1]}
+            disabled={
+              activeSection ===
+              Object.keys(sections)[Object.keys(sections).length - 1]
+            }
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg border ${
-              activeSection === Object.keys(sections)[Object.keys(sections).length - 1]
+              activeSection ===
+              Object.keys(sections)[Object.keys(sections).length - 1]
                 ? 'text-gray-400 border-gray-200 cursor-not-allowed'
                 : 'text-indigo-600 border-indigo-200 hover:bg-indigo-50'
             } transition-colors`}
           >
             <span>Section suivante</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-5 w-5'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+            >
+              <path
+                fillRule='evenodd'
+                d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
+                clipRule='evenodd'
+              />
             </svg>
           </button>
         </div>
       </motion.div>
-    );
-  };
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='min-h-screen bg-gray-50'>
       {/* Barre de navigation supérieure */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <Link href="/lessons" className="text-indigo-600 hover:text-indigo-800">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      <header className='bg-white shadow-sm border-b border-gray-200'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
+          <div className='flex justify-between items-center'>
+            <div className='flex items-center space-x-3'>
+              <Link
+                href='/lessons'
+                className='text-indigo-600 hover:text-indigo-800'
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  className='h-6 w-6'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M10 19l-7-7m0 0l7-7m-7 7h18'
+                  />
                 </svg>
               </Link>
-              <h1 className="text-xl font-bold text-gray-900">Fondamentaux React</h1>
+              <h1 className='text-xl font-bold text-gray-900'>
+                Fondamentaux React
+              </h1>
             </div>
-            
-            <div className="hidden md:flex items-center space-x-4">
-              <div className="w-48 bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2.5 rounded-full" 
+
+            <div className='hidden md:flex items-center space-x-4'>
+              <div className='w-48 bg-gray-200 rounded-full h-2.5 overflow-hidden'>
+                <div
+                  className='bg-gradient-to-r from-indigo-500 to-purple-600 h-2.5 rounded-full'
                   style={{ width: `${progressPercentage}%` }}
                 ></div>
               </div>
-              <span className="text-sm font-medium text-gray-700">{progressPercentage}% Complété</span>
+              <span className='text-sm font-medium text-gray-700'>
+                {progressPercentage}% Complété
+              </span>
             </div>
-            
-            <button 
-              className="md:hidden"
+
+            <button
+              className='md:hidden'
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='h-6 w-6 text-gray-500'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M4 6h16M4 12h16m-7 6h7'
+                />
               </svg>
             </button>
           </div>
         </div>
       </header>
-      
+
       {/* Contenu principal avec sidebar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div className='lg:grid lg:grid-cols-12 lg:gap-8'>
           {/* Sidebar pour desktop */}
-          <aside className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="font-semibold text-gray-900 mb-4">Modules du cours</h2>
-                <nav className="space-y-1">
+          <aside className='hidden lg:block lg:col-span-3'>
+            <div className='sticky top-6'>
+              <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
+                <h2 className='font-semibold text-gray-900 mb-4'>
+                  Modules du cours
+                </h2>
+                <nav className='space-y-1'>
                   {Object.entries(sections).map(([key, section], index) => (
                     <button
                       key={key}
                       onClick={() => handleSectionChange(key)}
                       className={`flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                         activeSection === key
-                          ? "bg-indigo-50 text-indigo-700"
-                          : "text-gray-700 hover:bg-gray-100"
+                          ? 'bg-indigo-50 text-indigo-700'
+                          : 'text-gray-700 hover:bg-gray-100'
                       }`}
                     >
-                      <div className="flex items-center justify-center w-6 h-6 mr-3">
+                      <div className='flex items-center justify-center w-6 h-6 mr-3'>
                         {progress[key] ? (
-                          <div className="w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <div className='w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center'>
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-4 w-4'
+                              viewBox='0 0 20 20'
+                              fill='currentColor'
+                            >
+                              <path
+                                fillRule='evenodd'
+                                d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                                clipRule='evenodd'
+                              />
                             </svg>
                           </div>
                         ) : (
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center ${activeSection === key ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-500'}`}>
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                              activeSection === key
+                                ? 'bg-indigo-100 text-indigo-700'
+                                : 'bg-gray-100 text-gray-500'
+                            }`}
+                          >
                             {index + 1}
                           </div>
                         )}
                       </div>
-                      <span className="truncate">{section.title}</span>
+                      <span className='truncate'>{section.title}</span>
                     </button>
                   ))}
                 </nav>
               </div>
-              
-              <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="font-semibold text-gray-900 mb-3">Votre progression</h2>
-                <div className="mb-3">
-                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+
+              <div className='mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
+                <h2 className='font-semibold text-gray-900 mb-3'>
+                  Votre progression
+                </h2>
+                <div className='mb-3'>
+                  <div className='flex justify-between text-sm text-gray-600 mb-1'>
                     <span>Complété</span>
-                    <span>{completedSections}/{totalSections} sections</span>
+                    <span>
+                      {completedSections}/{totalSections} sections
+                    </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                    <div 
-                      className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2.5 rounded-full" 
+                  <div className='w-full bg-gray-200 rounded-full h-2.5 overflow-hidden'>
+                    <div
+                      className='bg-gradient-to-r from-indigo-500 to-purple-600 h-2.5 rounded-full'
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
                   </div>
                 </div>
                 {completedSections === totalSections ? (
-                  <div className="text-center py-3 bg-green-50 text-green-700 rounded-lg">
-                    <span className="font-medium">Cours terminé! 🎉</span>
+                  <div className='text-center py-3 bg-green-50 text-green-700 rounded-lg'>
+                    <span className='font-medium'>Cours terminé! 🎉</span>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-600">
+                  <p className='text-sm text-gray-600'>
                     Continuez à apprendre pour compléter ce cours sur React.
                   </p>
                 )}
               </div>
-              
-              <div className="mt-6 bg-indigo-50 rounded-xl shadow-sm border border-indigo-100 p-6">
-                <h3 className="font-medium text-indigo-800 mb-2">Besoin d'aide?</h3>
-                <p className="text-sm text-indigo-700 mb-4">
-                  Si vous avez des questions sur React, n'hésitez pas à consulter la documentation officielle ou à demander de l'aide.
+
+              <div className='mt-6 bg-indigo-50 rounded-xl shadow-sm border border-indigo-100 p-6'>
+                <h3 className='font-medium text-indigo-800 mb-2'>
+                  Besoin d'aide?
+                </h3>
+                <p className='text-sm text-indigo-700 mb-4'>
+                  Si vous avez des questions sur React, n'hésitez pas à
+                  consulter la documentation officielle ou à demander de l'aide.
                 </p>
-                <a 
-                  href="https://fr.reactjs.org/docs/getting-started.html" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-lg inline-block transition-colors"
+                <a
+                  href='https://fr.reactjs.org/docs/getting-started.html'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-xs bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-lg inline-block transition-colors'
                 >
                   Documentation React
                 </a>
               </div>
             </div>
           </aside>
-          
+
           {/* Menu mobile */}
           <AnimatePresence>
             {showMobileMenu && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.2 }}
-                className="lg:hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-50"
+                className='lg:hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-50'
               >
-                <div className="bg-white p-6 h-auto max-h-[90vh] overflow-y-auto rounded-b-xl">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="font-semibold text-gray-900">Modules du cours</h2>
+                <div className='bg-white p-6 h-auto max-h-[90vh] overflow-y-auto rounded-b-xl'>
+                  <div className='flex justify-between items-center mb-4'>
+                    <h2 className='font-semibold text-gray-900'>
+                      Modules du cours
+                    </h2>
                     <button onClick={() => setShowMobileMenu(false)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        className='h-6 w-6 text-gray-500'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M6 18L18 6M6 6l12 12'
+                        />
                       </svg>
                     </button>
                   </div>
-                  
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
+
+                  <div className='mb-4'>
+                    <div className='flex justify-between text-sm text-gray-600 mb-1'>
                       <span>Progression</span>
                       <span>{progressPercentage}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                      <div 
-                        className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2.5 rounded-full" 
+                    <div className='w-full bg-gray-200 rounded-full h-2.5 overflow-hidden'>
+                      <div
+                        className='bg-gradient-to-r from-indigo-500 to-purple-600 h-2.5 rounded-full'
                         style={{ width: `${progressPercentage}%` }}
                       ></div>
                     </div>
                   </div>
-                  
-                  <nav className="space-y-1">
+
+                  <nav className='space-y-1'>
                     {Object.entries(sections).map(([key, section], index) => (
                       <button
                         key={key}
                         onClick={() => handleSectionChange(key)}
                         className={`flex items-center w-full px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
                           activeSection === key
-                            ? "bg-indigo-50 text-indigo-700"
-                            : "text-gray-700 hover:bg-gray-100"
+                            ? 'bg-indigo-50 text-indigo-700'
+                            : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
-                        <div className="flex items-center justify-center w-6 h-6 mr-3">
+                        <div className='flex items-center justify-center w-6 h-6 mr-3'>
                           {progress[key] ? (
-                            <div className="w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            <div className='w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center'>
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-4 w-4'
+                                viewBox='0 0 20 20'
+                                fill='currentColor'
+                              >
+                                <path
+                                  fillRule='evenodd'
+                                  d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                                  clipRule='evenodd'
+                                />
                               </svg>
                             </div>
                           ) : (
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${activeSection === key ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-500'}`}>
+                            <div
+                              className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                                activeSection === key
+                                  ? 'bg-indigo-100 text-indigo-700'
+                                  : 'bg-gray-100 text-gray-500'
+                              }`}
+                            >
                               {index + 1}
                             </div>
                           )}
                         </div>
-                        <span className="truncate">{section.title}</span>
+                        <span className='truncate'>{section.title}</span>
                       </button>
                     ))}
                   </nav>
@@ -1139,16 +1264,16 @@ ReactDOM.render(
               </motion.div>
             )}
           </AnimatePresence>
-          
+
           {/* Contenu principal */}
-          <main className="lg:col-span-9">
+          <main className='lg:col-span-9'>
             <motion.div
               variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-8"
+              initial='hidden'
+              animate='visible'
+              className='space-y-8'
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode='wait'>
                 {renderSectionContent()}
               </AnimatePresence>
             </motion.div>
@@ -1156,5 +1281,5 @@ ReactDOM.render(
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -2,18 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LESSONS } from '@/data/lessons';
+import { getLesson } from '@/data/lessons';
 
 interface LessonPageParams {
   moduleId: string;
   lessonId: string;
 }
 
+interface Lesson {
+  id: string;
+  title: string;
+  content: string | React.ReactNode;
+  // Add other lesson properties as needed
+  [key: string]: any;
+}
+
 export default function LessonPage({ params }: { params: LessonPageParams }) {
   const router = useRouter();
-  const [lesson, setLesson] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const moduleNumber = parseInt(params.moduleId, 10);
@@ -26,25 +34,20 @@ export default function LessonPage({ params }: { params: LessonPageParams }) {
     }
 
     try {
-      const module = LESSONS[moduleNumber - 1];
-      if (!module) {
-        setError('Module not found');
-        setIsLoading(false);
-        return;
-      }
-
-      const lesson = module.lessons[lessonNumber - 1];
-      if (!lesson) {
+      const foundLesson = getLesson(moduleNumber.toString(), lessonNumber.toString());
+      
+      if (!foundLesson) {
         setError('Lesson not found');
         setIsLoading(false);
         return;
       }
 
-      setLesson(lesson);
+      setLesson(foundLesson);
       setIsLoading(false);
     } catch (err) {
       setError('Error loading lesson');
       setIsLoading(false);
+      console.error('Error loading lesson:', err);
     }
   }, [params.moduleId, params.lessonId]);
 

@@ -64,7 +64,7 @@ interface LessonData {
     language?: string
   }
   duration?: number
-  difficulty?: 'débutant' | 'intermédiaire' | 'avancé'
+  difficulty?: 'débutant' | 'intermédiaire' | 'avancé' | 'expert'
   prerequisites?: string[]
   tags?: string[]
 }
@@ -411,12 +411,12 @@ export const LessonContent: React.FC<LessonContentProps> = ({
                   onCodeRun={() => {}}
                 />
               </div>
-            )
+            );
           }
-          currentCodeBlock = []
-          codeLanguage = 'javascript'
+          currentCodeBlock = [];
+          codeLanguage = 'javascript';
         }
-      }
+      };
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i]
@@ -627,8 +627,8 @@ export const LessonContent: React.FC<LessonContentProps> = ({
           onCodeRun={() => completeSection('project')}
         />
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div>
@@ -648,12 +648,12 @@ export const LessonContent: React.FC<LessonContentProps> = ({
                 <div
                   className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center mr-2 text-xs font-bold shadow-sm transition-all
                   ${
-                    activeSection === sectionKey
-                      ? 'bg-indigo-500 text-white scale-110'
-                      : sectionCompleted[sectionKey]
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
-                  }`}
+            activeSection === sectionKey
+              ? 'bg-indigo-500 text-white scale-110'
+              : sectionCompleted[sectionKey]
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+            }`}
                 >
                   {sectionCompleted[sectionKey] ? '✓' : index + 1}
                 </div>
@@ -746,45 +746,45 @@ export const LessonContent: React.FC<LessonContentProps> = ({
           {activeSection === 'example' &&
             (lesson.example ||
               (lesson.examples && lesson.examples.length > 0)) && (
-              <motion.div
-                key='example'
-                variants={contentVariants}
-                initial='hidden'
-                animate='visible'
-                exit='exit'
-              >
-                <h2 className='text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100'>
-                  Exemple Pratique
-                </h2>
-                {(lesson.examples && lesson.examples.length > 0
-                  ? lesson.examples
-                  : lesson.example
+            <motion.div
+              key='example'
+              variants={contentVariants}
+              initial='hidden'
+              animate='visible'
+              exit='exit'
+            >
+              <h2 className='text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100'>
+                Exemple Pratique
+              </h2>
+              {(lesson.examples && lesson.examples.length > 0
+                ? lesson.examples
+                : lesson.example
                   ? [lesson.example]
                   : []
-                ).map((ex, idx) => (
-                  <div
-                    key={idx}
-                    className='mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50'
-                  >
-                    <h3 className='text-xl font-medium mb-2 text-gray-700 dark:text-gray-200'>
-                      {ex.title}
-                    </h3>
-                    <CodeEditor
-                      initialCode={ex.code}
-                      language={ex.language || 'javascript'}
-                      readOnly={true}
-                      onCodeChange={() => {}}
-                      onCodeRun={() => {}}
-                    />
-                    {ex.explanation && (
-                      <p className='text-sm text-gray-600 dark:text-gray-400 mt-3 italic'>
-                        {ex.explanation}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </motion.div>
-            )}
+              ).map((ex, idx) => (
+                <div
+                  key={idx}
+                  className='mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50'
+                >
+                  <h3 className='text-xl font-medium mb-2 text-gray-700 dark:text-gray-200'>
+                    {ex.title}
+                  </h3>
+                  <CodeEditor
+                    initialCode={ex.code}
+                    language={ex.language || 'javascript'}
+                    readOnly={true}
+                    onCodeChange={() => {}}
+                    onCodeRun={() => {}}
+                  />
+                  {ex.explanation && (
+                    <p className='text-sm text-gray-600 dark:text-gray-400 mt-3 italic'>
+                      {ex.explanation}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </motion.div>
+          )}
 
           {activeSection === 'practice' && lesson.practice && (
             <motion.div
@@ -798,8 +798,8 @@ export const LessonContent: React.FC<LessonContentProps> = ({
                 Mise en Pratique
               </h2>
               <p className='text-gray-600 dark:text-gray-300 mb-4'>
-                Essayez d'écrire le code vous-même. Comparez avec la solution si
-                besoin.
+                Essayez d&apos;écrire le code vous-même. Comparez avec la
+                solution si besoin.
               </p>
               <CodeEditor
                 initialCode={practiceCode}
@@ -858,10 +858,10 @@ export const LessonContent: React.FC<LessonContentProps> = ({
               lesson.example ||
               (lesson.examples && lesson.examples.length > 0)
             ) && (
-              <p className='text-gray-500 dark:text-gray-400'>
-                Aucun exemple pour cette leçon.
-              </p>
-            )}
+            <p className='text-gray-500 dark:text-gray-400'>
+              Aucun exemple pour cette leçon.
+            </p>
+          )}
           {activeSection === 'practice' && !lesson.practice && (
             <p className='text-gray-500 dark:text-gray-400'>
               Aucune section de pratique pour cette leçon.
@@ -914,17 +914,17 @@ export const LessonContent: React.FC<LessonContentProps> = ({
             whileTap={{ scale: 0.98 }}
             onClick={() => {
               if (!sectionCompleted[activeSection]) {
-                completeSection(activeSection) // This will also update progress via useEffect
+                completeSection(activeSection); // This will also update progress via useEffect
               } else if (
                 availableSections.indexOf(activeSection) <
                 availableSections.length - 1
               ) {
-                navigateToNextSection()
+                navigateToNextSection();
               } else {
-                console.log('Toutes les sections de la leçon sont complétées!')
+                console.log('Toutes les sections de la leçon sont complétées!');
                 // Potentially navigate to next lesson if available via `availableLessons.next`
                 if (availableLessons.next) {
-                  const nextLessonParts = availableLessons.next.id.split('-')
+                  const nextLessonParts = availableLessons.next.id.split('-');
                   // Router.push or Link to `/lessons/module/${moduleId}/lesson/${nextLessonParts[1]}`
                 }
               }
@@ -941,8 +941,8 @@ export const LessonContent: React.FC<LessonContentProps> = ({
                 ? 'Continuer'
                 : `Compléter "${sectionDisplayNames[activeSection]}" et Continuer`
               : sectionCompleted[activeSection]
-              ? 'Leçon Terminée'
-              : `Terminer "${sectionDisplayNames[activeSection]}"`}
+                ? 'Leçon Terminée'
+                : `Terminer "${sectionDisplayNames[activeSection]}"`}
             {(availableSections.indexOf(activeSection) <
               availableSections.length - 1 ||
               !sectionCompleted[activeSection]) && (
@@ -974,5 +974,5 @@ export const LessonContent: React.FC<LessonContentProps> = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};

@@ -37,7 +37,15 @@ export async function GET() {
       '5': { title: 'API et Bases de Données', description: 'Intégration de backends et gestion de données.', difficulty: 'Avancé', imageUrl: '/images/modules/module5.webp' },
       '6': { title: 'Tests et Déploiement', description: 'Assurer la qualité et mettre en production.', difficulty: 'Avancé', imageUrl: '/images/modules/module6.webp' },
       '7': { title: 'Performance et Optimisation', description: 'Optimiser le build, le rendu, et le chargement.', difficulty: 'Expert', imageUrl: '/images/modules/module7.webp' },
-      '8': { title: 'Internationalisation et Avancé', description: 'i18n, thèmes, et fonctionnalités avancées de Next.js.', difficulty: 'Expert', imageUrl: '/images/modules/module8.webp' }
+      '8': { title: 'Internationalisation et Avancé', description: 'i18n, thèmes, et fonctionnalités avancées de Next.js.', difficulty: 'Expert', imageUrl: '/images/modules/module8.webp' },
+      '9': { title: 'Tests et Qualité', description: 'Tests unitaires, tests d\'intégration et assurance qualité avec Next.js.', difficulty: 'Intermédiaire', imageUrl: '/images/modules/module9.webp' },
+      '10': { title: 'CMS Headless', description: 'Intégration avec des CMS headless et gestion de contenu.', difficulty: 'Intermédiaire', imageUrl: '/images/modules/module10.webp' },
+      '11': { title: 'Architecture Avancée', description: 'Patterns d\'architecture et gestion de projets complexes.', difficulty: 'Avancé', imageUrl: '/images/modules/module11.webp' },
+      '12': { title: 'DevOps et Déploiement', description: 'Pratiques DevOps, CI/CD et déploiement automatisé.', difficulty: 'Avancé', imageUrl: '/images/modules/module12.webp' },
+      '13': { title: 'Micro-frontends', description: 'Architecture micro-frontends et modularité avancée.', difficulty: 'Expert', imageUrl: '/images/modules/module13.webp' },
+      '14': { title: 'Sécurité Avancée', description: 'Sécurisation complète d\'applications Next.js en production.', difficulty: 'Expert', imageUrl: '/images/modules/module14.webp' },
+      '15': { title: 'SEO et Performance', description: 'Optimisation SEO avancée et surveillance des performances.', difficulty: 'Expert', imageUrl: '/images/modules/module15.webp' },
+      '16': { title: 'Projet Final', description: 'Mise en pratique de toutes les compétences acquises.', difficulty: 'Expert', imageUrl: '/images/modules/module16.webp' }
     };
 
     // Assuming LESSONS is an object where keys are full lesson IDs "moduleId-lessonNum"
