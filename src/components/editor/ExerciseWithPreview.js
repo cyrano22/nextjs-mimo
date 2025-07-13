@@ -30,9 +30,19 @@ export default function ExerciseWithPreview({
   const [isCorrect, setIsCorrect] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [showSolution, setShowSolution] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
-  // Toujours utiliser le thème clair
-  const theme = 'light';
+  // Détecter la taille de l'écran
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
   
   // Animation variants
   const containerVariants = {
@@ -125,29 +135,30 @@ export default function ExerciseWithPreview({
   const toggleSolution = () => {
     setShowSolution(!showSolution);
   };
-  
+
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="bg-white rounded-lg shadow-md overflow-hidden"
+      className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
     >
       {/* En-tête de l'exercice */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 md:px-6 py-4">
         <motion.h3 
           variants={itemVariants}
-          className="text-xl font-semibold text-white"
+          className="text-lg md:text-xl font-semibold text-white"
         >
           {exerciseData.title}
         </motion.h3>
         <motion.div 
           variants={itemVariants}
-          className="flex items-center text-purple-100 text-sm mt-1"
+          className="flex flex-wrap items-center text-purple-100 text-sm mt-2 gap-2"
         >
-          <span className="mr-3">Difficulté: {exerciseData.difficulty}</span>
-          <span className="mr-3">•</span>
-          <span className="flex items-center">
+          <span className="bg-white bg-opacity-20 px-2 py-1 rounded">
+            Difficulté: {exerciseData.difficulty}
+          </span>
+          <span className="bg-white bg-opacity-20 px-2 py-1 rounded flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
             </svg>
@@ -155,23 +166,20 @@ export default function ExerciseWithPreview({
           </span>
           
           {exerciseData.contributeToPortfolio && (
-            <>
-              <span className="mx-3">•</span>
-              <span className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                Contribue au portfolio
-              </span>
-            </>
+            <span className="bg-white bg-opacity-20 px-2 py-1 rounded flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              Portfolio
+            </span>
           )}
         </motion.div>
       </div>
       
       {/* Contenu de l'exercice */}
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <motion.div variants={itemVariants} className="mb-6">
-          <p className="text-gray-700">{exerciseData.description}</p>
+          <p className="text-gray-700 leading-relaxed">{exerciseData.description}</p>
         </motion.div>
         
         {exerciseData.instructions && exerciseData.instructions.length > 0 && (
@@ -179,7 +187,7 @@ export default function ExerciseWithPreview({
             <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Instructions</h4>
             <ul className="list-disc pl-5 space-y-2 text-gray-600">
               {exerciseData.instructions.map((instruction, index) => (
-                <li key={index}>{instruction}</li>
+                <li key={index} className="leading-relaxed">{instruction}</li>
               ))}
             </ul>
           </motion.div>
@@ -191,7 +199,7 @@ export default function ExerciseWithPreview({
             initialCode={exerciseData.initialCode}
             language={exerciseData.language}
             onCodeChange={handleCodeChange}
-            height="300px"
+            height={isMobile ? "250px" : "300px"}
             showPreview={true}
             autoPreview={true}
             theme="light"
@@ -201,27 +209,40 @@ export default function ExerciseWithPreview({
         {feedback && (
           <motion.div 
             variants={itemVariants}
-            className={`p-4 rounded-md mb-6 ${
+            className={`p-4 rounded-lg mb-6 ${
               feedback.type === 'success' 
                 ? 'bg-green-50 text-green-700 border border-green-200' 
                 : 'bg-red-50 text-red-700 border border-red-200'
             }`}
           >
-            {feedback.message}
+            <div className="flex items-start space-x-2">
+              <div className="flex-shrink-0">
+                {feedback.type === 'success' ? (
+                  <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </div>
+              <div className="text-sm leading-relaxed">{feedback.message}</div>
+            </div>
           </motion.div>
         )}
         
-        <motion.div variants={itemVariants} className="flex flex-wrap gap-3">
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={checkSolution}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            className="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
           >
             Vérifier ma solution
           </button>
           
           <button
             onClick={toggleSolution}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+            className="flex-1 sm:flex-none px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
           >
             {showSolution ? 'Masquer la solution' : 'Voir la solution'}
           </button>
@@ -235,10 +256,15 @@ export default function ExerciseWithPreview({
             className="mt-6"
           >
             <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Solution</h4>
-            <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
-              <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
-                {exerciseData.solutionCode}
-              </pre>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg overflow-hidden">
+              <div className="p-3 bg-gray-100 border-b border-gray-200">
+                <span className="text-xs font-medium text-gray-600">Solution de l'exercice</span>
+              </div>
+              <div className="p-4">
+                <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono leading-relaxed overflow-x-auto">
+                  {exerciseData.solutionCode}
+                </pre>
+              </div>
             </div>
           </motion.div>
         )}
